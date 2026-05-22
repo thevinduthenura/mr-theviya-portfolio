@@ -20,7 +20,7 @@ const About = () => {
         <div className="about-image-wrap fade-up">
           <div className="about-img-frame">
             <img
-              src="/images/about.jpg"
+              src="/images/profile.png"
               alt="Thevindu Thenura"
               onError={e => {
                 e.target.style.display = 'none';

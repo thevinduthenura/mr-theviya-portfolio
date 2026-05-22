@@ -1,13 +1,15 @@
 import './Clients.css';
 
 const clients = [
-  { name: 'COSMOS', img: '/images/clients/cosmos.png' },
-  { name: 'ROAR', img: '/images/clients/roar.png' },
-  { name: 'KALAAVATA', img: '/images/clients/kalaavata.png' },
-  { name: 'A.A. OPTOMETRISTS', img: '/images/clients/aa-optometrists.png' },
-  { name: 'THE ROYAL', img: '/images/clients/the-royal.png' },
-  { name: 'SHRIYA', img: '/images/clients/shriya.png' },
-  { name: 'TAJ MAHAL', img: '/images/clients/taj-mahal.png' },
+  { name: 'COSMOS', img: '/images/clients/Cosmos%20logo.svg' },
+  { name: 'ROAR', img: '/images/clients/ROAR%20Logo%2026.svg' },
+  { name: 'KALAAVATA', img: '/images/clients/kalaawata%20logo.svg' },
+  { name: 'A.A. SAMARASINHA', img: '/images/clients/AASamarasinha%20Logo.svg' },
+  { name: 'ROYAL', img: '/images/clients/Royal%20Logo.svg' },
+  { name: 'SLIIT', img: '/images/clients/SLIIT-UNI-LOGOwhite%201.svg' },
+  { name: 'SSC', img: '/images/clients/SSC%20Logo.svg' },
+  { name: 'RUPAVAHINI', img: '/images/clients/rupavahini%20logo.svg' },
+  { name: 'C2 DISTRICT', img: '/images/clients/C2%20District%20Logo.svg' }
 ];
 
 const Clients = () => {

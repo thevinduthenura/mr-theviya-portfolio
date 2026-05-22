@@ -23,7 +23,7 @@ const Hero = () => {
         <div className="hero-center">
           <div className="portrait-outer">
             <img
-              src="/images/profile.jpg"
+              src="/images/profile.png"
               alt="Mr. Theviya"
               className="portrait-img"
               onError={e => { e.target.style.display = 'none'; }}
