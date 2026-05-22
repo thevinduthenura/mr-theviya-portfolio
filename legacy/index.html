@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Mr. Theviya — Graphic Designer & Visual Editor from Sri Lanka. 5+ years experience, 120+ projects." />
+  <meta property="og:title" content="Mr. Theviya — Portfolio" />
+  <meta property="og:description" content="Graphic Designer & Visual Editor | Design Your Dreams" />
+  <meta property="og:image" content="images/og-image.jpg" />
+  <title>Mr. Theviya — Graphic Designer & Visual Editor</title>
+  <link rel="icon" href="images/favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor">
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#home" class="nav-logo"><span>Mr.</span>Theviya</a>
+    <ul class="nav-links">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">More Info ↗</a>
+    <button class="nav-burger" id="navBurger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="glow-blob glow-blob-1"></div>
+    <div class="glow-blob glow-blob-2"></div>
+    <div class="bg-number">T</div>
+
+    <div class="hero-content">
+      <!-- Left -->
+      <div class="hero-text fade-up">
+        <div class="hero-tag">Portfolio 2024</div>
+        <p class="hero-greeting">Hey, I'm</p>
+        <h1 class="hero-name">mr.<span>theviya</span></h1>
+        <div class="hero-roles">
+          <span>Graphic Designer</span>
+          <span class="dot-sep"></span>
+          <span>Visual Editor</span>
+        </div>
+        <div class="hero-underline"></div>
+        <a href="#services" class="hero-arrow">
+          <div class="arrow-icon">↘</div>
+          <span>Explore Work</span>
+        </a>
+      </div>
+
+      <!-- Center photo -->
+      <div class="hero-photo-wrap fade-up" style="transition-delay:0.15s">
+        <div style="position:relative">
+          <div class="photo-frame">
+            <!-- ⚠️ Replace with your actual photo: -->
+            <img src="images/profile.jpg" alt="Thevindu Thenura" onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><svg xmlns=\'http://www.w3.org/2000/svg\' width=\'48\' height=\'48\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'currentColor\' stroke-width=\'1\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z\' /></svg><span>Add profile.jpg to images/</span></div>'" />
+          </div>
+          <div class="photo-badge">Available for Work</div>
+        </div>
+      </div>
+
+      <!-- Right stats -->
+      <div class="hero-stats fade-up" style="transition-delay:0.3s">
+        <div class="stat-item">
+          <div class="stat-label">Years of experience</div>
+          <div class="stat-num" data-target="5">5<span>+</span></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Projects done</div>
+          <div class="stat-num" data-target="120">120<span>+</span></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Clients</div>
+          <div class="stat-num" data-target="35">35<span>+</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- CLIENTS MARQUEE -->
+  <div id="clients">
+    <div class="clients-inner">
+      <p class="clients-label">Trusted by brands & organizations</p>
+      <div class="clients-track-wrap">
+        <div class="clients-track">
+          <span class="client-logo">COSMOS</span>
+          <span class="client-logo">★ ROAR</span>
+          <span class="client-logo">KALAAVATA</span>
+          <span class="client-logo">A.A. OPTOMETRISTS</span>
+          <span class="client-logo">THE ROYAL</span>
+          <span class="client-logo">SHRIYA</span>
+          <!-- duplicated for seamless loop -->
+          <span class="client-logo">COSMOS</span>
+          <span class="client-logo">★ ROAR</span>
+          <span class="client-logo">KALAAVATA</span>
+          <span class="client-logo">A.A. OPTOMETRISTS</span>
+          <span class="client-logo">THE ROYAL</span>
+          <span class="client-logo">SHRIYA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-inner">
+      <div class="services-header fade-up">
+        <div>
+          <div class="section-label">What I do</div>
+          <h2 class="section-title">Services I Offer</h2>
+        </div>
+        <p class="services-subtitle">Creating impactful visual experiences from concept to completion — where creativity meets strategy.</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card fade-up">
+          <span class="service-num">01</span>
+          <h3 class="service-title">Graphic Design</h3>
+          <p class="service-desc">Creating visual identities, logos, and brand materials that make lasting impressions.</p>
+          <ul class="service-list">
+            <li>Logo Design</li>
+            <li>Brand Identity</li>
+            <li>Print Design</li>
+            <li>Digital Graphics</li>
+            <li>Business Card Design</li>
+          </ul>
+          <a href="https://www.behance.net/mrtheviya1" target="_blank" class="service-link">↗ View on Behance</a>
+          <div class="service-bg-icon">✦</div>
+        </div>
+
+        <div class="service-card fade-up" style="transition-delay:0.1s">
+          <span class="service-num">02</span>
+          <h3 class="service-title">Video Editing</h3>
+          <p class="service-desc">Professional video editing and post-production services for all your content needs.</p>
+          <ul class="service-list">
+            <li>Color Grading</li>
+            <li>Motion Graphics</li>
+            <li>Sound Design</li>
+            <li>Visual Effects</li>
+          </ul>
+          <a href="https://drive.google.com/drive/folders/1pMdzCWnv3ljObhXKVxFvt129z1yi8qtD" target="_blank" class="service-link">↗ View Samples</a>
+          <div class="service-bg-icon">▶</div>
+        </div>
+
+        <div class="service-card fade-up" style="transition-delay:0.15s">
+          <span class="service-num">03</span>
+          <h3 class="service-title">Photography</h3>
+          <p class="service-desc">Capturing moments and telling stories through professional photography services.</p>
+          <ul class="service-list">
+            <li>Portrait Photography</li>
+            <li>Event Coverage</li>
+            <li>Product Photography</li>
+            <li>Commercial Shoots</li>
+          </ul>
+          <a href="#contact" class="service-link">↗ Get a Quote</a>
+          <div class="service-bg-icon">◎</div>
+        </div>
+
+        <div class="service-card fade-up" style="transition-delay:0.2s">
+          <span class="service-num">04</span>
+          <h3 class="service-title">Creative Direction</h3>
+          <p class="service-desc">Leading creative projects from concept to completion with strategic vision.</p>
+          <ul class="service-list">
+            <li>Creative Strategy</li>
+            <li>Project Management</li>
+            <li>Team Leadership</li>
+            <li>Brand Consulting</li>
+          </ul>
+          <a href="#contact" class="service-link">↗ Let's Talk</a>
+          <div class="service-bg-icon">◈</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-inner">
+      <div class="about-grid">
+        <div class="about-image-wrap fade-up">
+          <div class="about-img">
+            <!-- ⚠️ Replace with your actual about photo: -->
+            <img src="images/about.jpg" alt="About Thevindu" onerror="this.parentElement.innerHTML='<div class=\'about-img-placeholder\'><span>Add about.jpg to images/</span></div>'" />
+          </div>
+          <div class="about-decoration">
+            <div class="about-decoration-inner">
+              5+
+              <small>Years<br>Experience</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-text fade-up" style="transition-delay:0.15s">
+          <div class="section-label">Who I am</div>
+          <h2 class="section-title">Thevindu<br><em>Thenura</em></h2>
+          <p class="about-bio">
+            I'm <strong>Thevindu Thenura</strong> — a Sri Lankan Graphic Designer and Visual Editor with over <strong>5 years of experience</strong> crafting visual identities that resonate. I work across domestic and international markets, bringing <strong>innovation and passion</strong> to every project.
+          </p>
+          <p class="about-bio">
+            From bold logo concepts to polished brand identities, my work blends strategic thinking with creative execution. <em>"Design Your Dreams — let's create something beautiful together."</em>
+          </p>
+          <div class="about-skills">
+            <span class="skill-tag">Logo Design</span>
+            <span class="skill-tag">Branding</span>
+            <span class="skill-tag">Illustration</span>
+            <span class="skill-tag">Video Editing</span>
+            <span class="skill-tag">Photography</span>
+            <span class="skill-tag">Motion Graphics</span>
+            <span class="skill-tag">Print Design</span>
+            <span class="skill-tag">Social Media</span>
+          </div>
+          <div class="social-links">
+            <a href="https://instagram.com/mr.theviya" target="_blank" class="social-btn">📸 Instagram</a>
+            <a href="https://www.behance.net/mrtheviya1" target="_blank" class="social-btn">🎨 Behance</a>
+            <a href="https://www.fiverr.com/pe/WL39d7" target="_blank" class="social-btn">⚡ Fiverr</a>
+            <a href="https://www.upwork.com/freelancers/~018169c21ea3d09e71" target="_blank" class="social-btn">↗ UpWork</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-inner">
+      <div class="contact-grid">
+        <div class="contact-text fade-up">
+          <div class="section-label">Get in Touch</div>
+          <h2 class="section-title">Let's Work<br><em>Together</em></h2>
+          <p>Have a project in mind? I'd love to hear about it. Drop a message and let's create something extraordinary.</p>
+
+          <div class="contact-items">
+            <a href="https://whatsapp.com/channel/0029VaAMUWs0gcfO6GBcoW2R" class="contact-item" target="_blank">
+              <div class="contact-icon">💬</div>
+              <div>
+                <div class="contact-item-label">WhatsApp</div>
+                <div class="contact-item-value">Message me directly</div>
+              </div>
+            </a>
+            <a href="https://instagram.com/mr.theviya" class="contact-item" target="_blank">
+              <div class="contact-icon">📸</div>
+              <div>
+                <div class="contact-item-label">Instagram</div>
+                <div class="contact-item-value">@mr.theviya</div>
+              </div>
+            </a>
+            <a href="https://www.linkedin.com/in/thevindu-thenura" class="contact-item" target="_blank">
+              <div class="contact-icon">💼</div>
+              <div>
+                <div class="contact-item-label">LinkedIn</div>
+                <div class="contact-item-value">Thevindu Thenura</div>
+              </div>
+            </a>
+            <a href="https://www.fiverr.com/pe/WL39d7" class="contact-item" target="_blank">
+              <div class="contact-icon">⚡</div>
+              <div>
+                <div class="contact-item-label">Hire on Fiverr</div>
+                <div class="contact-item-value">Quick turnaround projects</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-form fade-up" style="transition-delay:0.15s">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input class="form-input" type="text" id="firstName" placeholder="John" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input class="form-input" type="text" id="lastName" placeholder="Doe" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" id="emailInput" placeholder="you@email.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Service</label>
+            <input class="form-input" type="text" id="serviceInput" placeholder="e.g. Logo Design, Video Editing..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-textarea" id="messageInput" placeholder="Tell me about your project..."></textarea>
+          </div>
+          <button class="btn-send" id="sendBtn">Send Message →</button>
+          <div class="form-success" id="formSuccess">✅ Message sent! I'll get back to you soon.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo"><span>Mr.</span>Theviya</div>
+    <div class="footer-copy">© 2024 Thevindu Thenura. All rights reserved.</div>
+    <div class="footer-socials">
+      <a href="https://instagram.com/mr.theviya" target="_blank" class="footer-social">ig</a>
+      <a href="https://www.facebook.com/mr.theviya" target="_blank" class="footer-social">fb</a>
+      <a href="https://www.tiktok.com/@mr.theviya" target="_blank" class="footer-social">tk</a>
+      <a href="https://x.com/thevi____" target="_blank" class="footer-social">𝕏</a>
+      <a href="https://www.behance.net/mrtheviya1" target="_blank" class="footer-social">be</a>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
