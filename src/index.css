@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&display=swap');
+
+:root {
+  --bg: #0b0705;
+  --text-primary: #f0e8df;
+  --text-muted: #7a6a5a;
+  --accent: #e86410;
+  --accent-glow: rgba(232, 100, 16, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --card-bg: #120e0b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Background Effects */
+.bg-glow-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.glow-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+}
+
+.glow-1 {
+  width: 800px;
+  height: 800px;
+  top: -10%;
+  right: -10%;
+}
+
+.glow-2 {
+  width: 600px;
+  height: 600px;
+  bottom: 10%;
+  left: -20%;
+}
+
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 25vw;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(232, 100, 16, 0.05);
+  white-space: nowrap;
+  line-height: 0.8;
+  text-align: center;
+  z-index: -1;
+  user-select: none;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Layout lines (dotted borders) */
+.layout-lines {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1400px;
+  pointer-events: none;
+  z-index: -1;
+  border-left: 1px dashed rgba(255,255,255,0.05);
+  border-right: 1px dashed rgba(255,255,255,0.05);
+}
+.layout-lines::before {
+  content: '';
+  position: absolute;
+  top: 400px;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed rgba(255,255,255,0.05);
+}
