@@ -1,0 +1,71 @@
+.clients-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 50px 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.clients-track-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
+.clients-track-wrap::before,
+.clients-track-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+.clients-track-wrap::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--bg), transparent);
+}
+.clients-track-wrap::after {
+  right: 0;
+  background: linear-gradient(-90deg, var(--bg), transparent);
+}
+
+.clients-track {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  animation: marquee 25s linear infinite;
+  width: max-content;
+}
+.clients-track:hover { animation-play-state: paused; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.client-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+  filter: grayscale(1) brightness(2);
+  min-width: 80px;
+}
+.client-item:hover { opacity: 1; filter: grayscale(0) brightness(1); }
+
+.client-item img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+.client-name-fallback {
+  display: none;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}

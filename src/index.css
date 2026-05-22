@@ -1,46 +1,54 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
+/* ── DESIGN TOKENS ── */
 :root {
-  --bg: #0b0705;
-  --text-primary: #f0e8df;
-  --text-muted: #7a6a5a;
-  --accent: #e86410;
-  --accent-glow: rgba(232, 100, 16, 0.15);
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --card-bg: #120e0b;
+  --bg:          #0c0c0c;
+  --text:        rgba(235, 235, 235, 0.8);
+  --text-bright: #EBEBEB;
+  --text-muted:  rgba(235, 235, 235, 0.4);
+  --accent:      #BB4A0D;
+  --accent-glow: rgba(187, 74, 13, 0.2);
+  --glass-bg:    rgba(255, 255, 255, 0.06);
+  --glass-border:rgba(229, 229, 229, 0.5);
+  --card-bg:     rgba(12, 12, 12, 0.85);
+
+  /* Font aliases — matches Figma fonts as closely as possible */
+  --font-display: 'Cormorant Garamond', serif;       /* Reina Neue → italic serif */
+  --font-label:   'Space Grotesk', sans-serif;       /* Degular Display */
+  --font-ui:      'Outfit', sans-serif;              /* Ariom */
+  --font-body:    'DM Sans', sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
   background-color: var(--bg);
-  color: var(--text-primary);
-  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  font-family: var(--font-body);
   overflow-x: hidden;
   line-height: 1.6;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* ── CONTAINER ── */
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 80px;
+  position: relative;
+  z-index: 1;
 }
 
-ul {
-  list-style: none;
-}
-
-/* Background Effects */
+/* ── BACKGROUND EFFECTS ── */
 .bg-glow-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
@@ -49,68 +57,84 @@ ul {
 .glow-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
+  filter: blur(140px);
   background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
 }
-
-.glow-1 {
-  width: 800px;
-  height: 800px;
-  top: -10%;
-  right: -10%;
-}
-
-.glow-2 {
-  width: 600px;
-  height: 600px;
-  bottom: 10%;
-  left: -20%;
-}
+.glow-1 { width: 900px; height: 900px; top: -20%; right: -15%; }
+.glow-2 { width: 700px; height: 700px; bottom: 5%; left: -25%; }
 
 .watermark {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 25vw;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(232, 100, 16, 0.05);
+  font-family: var(--font-ui);
+  font-size: 256px;
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.17);
+  filter: blur(3.8px);
   white-space: nowrap;
-  line-height: 0.8;
+  line-height: 0.85;
   text-align: center;
-  z-index: -1;
   user-select: none;
+  pointer-events: none;
 }
 
-/* Container */
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 40px;
-  position: relative;
-  z-index: 1;
-}
-
-/* Layout lines (dotted borders) */
+/* ── LAYOUT LINES ── */
 .layout-lines {
   position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1400px;
+  inset: 0;
   pointer-events: none;
   z-index: -1;
-  border-left: 1px dashed rgba(255,255,255,0.05);
-  border-right: 1px dashed rgba(255,255,255,0.05);
+  border-left: 1px dashed rgba(255,255,255,0.04);
+  border-right: 1px dashed rgba(255,255,255,0.04);
+  max-width: 1440px;
+  margin: 0 auto;
+  left: 50%; transform: translateX(-50%);
 }
-.layout-lines::before {
+
+/* ── SCROLL ANIMATION ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.section-label::after {
   content: '';
-  position: absolute;
-  top: 400px;
-  left: 0;
-  right: 0;
-  border-top: 1px dashed rgba(255,255,255,0.05);
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(187,74,13,0.4), transparent);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4vw, 60px);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text-bright);
+}
+
+@media (max-width: 900px) {
+  .container { padding: 0 24px; }
+  .watermark { font-size: 100px; }
 }
