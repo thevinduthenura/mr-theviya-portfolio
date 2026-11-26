@@ -147,7 +147,7 @@ const StatementShowcase = () => {
             <span className="st-scrub-word">BRAND</span>{' '}
             <span className="st-scrub-word">SYSTEMS</span>
             <span ref={pillRef} className="inline-pill-media">
-              <img src="/images/editorial/brand-identity.jpg" alt="" />
+              <img src="/images/projects/graphic-design/hyper-1.jpg" alt="" />
             </span>
             <span className="st-scrub-word">THAT</span>
             <br />
@@ -201,7 +201,9 @@ const StatementShowcase = () => {
                   <img src={project.image} alt={project.title} loading="lazy" />
                   <div className="showcase-card-scrim" />
                   <div className="showcase-card-sheen" aria-hidden="true" />
-                  <span className="showcase-card-pill">{project.category}</span>
+                  <span className="showcase-card-pill">
+                    {project.platform} · {project.category}
+                  </span>
                   <span className="showcase-card-arrow" aria-hidden="true">
                     ↗
                   </span>

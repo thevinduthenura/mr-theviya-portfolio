@@ -11,9 +11,28 @@ export type SectionId =
 export type GalleryCategoryId =
   | 'all'
   | 'graphic-design'
-  | 'videography'
   | 'photography'
+  | 'videography'
   | 'web-design';
+
+export type GraphicSubFilterId = 'all' | 'projects' | 'sliit' | 'clients' | 'other';
+
+export type SocialPlatform =
+  | 'Instagram'
+  | 'Behance'
+  | 'YouTube'
+  | 'TikTok'
+  | 'Google Drive'
+  | 'LinkedIn'
+  | 'Pinterest'
+  | 'Facebook'
+  | 'GitHub';
+
+export interface SocialActionLink {
+  platform: SocialPlatform;
+  handle: string;
+  href: string;
+}
 
 export interface GalleryCategoryTab {
   id: GalleryCategoryId;
@@ -22,19 +41,34 @@ export interface GalleryCategoryTab {
   tagline: string;
 }
 
+export interface GraphicSubTab {
+  id: GraphicSubFilterId;
+  label: string;
+}
+
 export interface GalleryProject {
   id: string;
   code: string;
   title: string;
   category: Exclude<GalleryCategoryId, 'all'>;
   categoryLabel: string;
+  subGroup?: Exclude<GraphicSubFilterId, 'all'>;
+  isProject?: boolean;
+  featuredInAll?: boolean;
   client: string;
   year: string;
   aspect: 'wide' | 'tall' | 'square';
   image: string;
+  galleryImages?: string[];
   href: string;
   tools: string[];
   summary: string;
+  socialFeatured?: boolean;
+  primaryPlatform: SocialPlatform;
+  socialHandle: string;
+  mediaFormat?: string;
+  youtubeEmbedId?: string;
+  socialLinks: SocialActionLink[];
 }
 
 export interface NavItem {
@@ -56,6 +90,7 @@ export interface ShowcaseProject {
   category: string;
   year: string;
   client: string;
+  platform: SocialPlatform;
   image: string;
   href: string;
 }
@@ -65,7 +100,7 @@ export interface PosterWork {
   code: string;
   title: string;
   subtitle: string;
-  category: 'Brand Identity' | 'Campaign' | 'Video & VFX' | 'Art Direction';
+  category: 'Campaign' | 'Merch & Apparel' | 'Editorial';
   client: string;
   year: string;
   image: string;

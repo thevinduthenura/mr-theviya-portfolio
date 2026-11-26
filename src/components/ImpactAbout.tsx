@@ -124,7 +124,7 @@ const ImpactAbout = ({ onNavigate }: ImpactAboutProps) => {
             <span className="imp-drift-left imp-block-line">
               INTO VISUAL
               <span className="inline-pill-media">
-                <img src="/images/editorial/video-motion.jpg" alt="" />
+                <img src="/images/projects/videography/hyper-media-reel.jpg" alt="" />
               </span>
               STATEMENTS
             </span>
@@ -141,7 +141,7 @@ const ImpactAbout = ({ onNavigate }: ImpactAboutProps) => {
           <div className="impact-col">
             <div className="impact-media-card">
               <img
-                src="/images/projects/photography/editorial-lens.jpg"
+                src="/images/projects/photography/kollupitiya-1.jpg"
                 alt="Editorial visual composition"
                 loading="lazy"
               />
@@ -207,8 +207,8 @@ const ImpactAbout = ({ onNavigate }: ImpactAboutProps) => {
           <div className="impact-col">
             <div className="impact-media-card" data-cursor="CRAFT">
               <img
-                src="/images/editorial/creative-direction.jpg"
-                alt="Creative direction and brand art"
+                src="/images/projects/photography/doctor-1.jpg"
+                alt="Live concert photography by Mr. Theviya"
                 loading="lazy"
               />
               <div className="impact-media-scrim" />

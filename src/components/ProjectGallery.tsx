@@ -3,8 +3,17 @@ import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { BRAND, GALLERY_CATEGORIES, GALLERY_PROJECTS } from '../data/portfolio';
-import type { GalleryCategoryId, GalleryProject } from '../types/portfolio';
+import {
+  BRAND,
+  GALLERY_CATEGORIES,
+  GALLERY_PROJECTS,
+  GRAPHIC_SUB_TABS,
+} from '../data/portfolio';
+import type {
+  GalleryCategoryId,
+  GalleryProject,
+  GraphicSubFilterId,
+} from '../types/portfolio';
 import KineticHeading from './KineticHeading';
 import './ProjectGallery.css';
 
@@ -22,35 +31,58 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
   const gridRef = useRef<HTMLDivElement | null>(null);
   const flipStateRef = useRef<Flip.FlipState | null>(null);
 
+  const [graphicSub, setGraphicSub] = useState<GraphicSubFilterId>('all');
   const [layoutMode, setLayoutMode] = useState<LayoutMode>('bento');
   const [selectedProject, setSelectedProject] = useState<GalleryProject | null>(null);
+  const [modalSlideIdx, setModalSlideIdx] = useState<number>(0);
 
-  const visibleProjects =
-    activeCategory === 'all'
-      ? GALLERY_PROJECTS
-      : GALLERY_PROJECTS.filter((p) => p.category === activeCategory);
+  const visibleProjects = GALLERY_PROJECTS.filter((p) => {
+    if (activeCategory === 'all') {
+      return Boolean(p.featuredInAll);
+    }
+    if (p.category !== activeCategory) return false;
+    if (activeCategory === 'graphic-design' && graphicSub !== 'all') {
+      return p.subGroup === graphicSub;
+    }
+    return true;
+  });
 
   const activeTabMeta =
     GALLERY_CATEGORIES.find((c) => c.id === activeCategory) ?? GALLERY_CATEGORIES[0];
 
-  // Capture Flip state before changing category or layout
-  const handleSelectCategory = (cat: GalleryCategoryId) => {
-    if (cat === activeCategory) return;
+  const captureFlip = () => {
     if (gridRef.current) {
       flipStateRef.current = Flip.getState(gridRef.current.querySelectorAll('.pg-card'));
+    }
+  };
+
+  const handleSelectCategory = (cat: GalleryCategoryId) => {
+    if (cat === activeCategory) return;
+    captureFlip();
+    if (cat !== 'graphic-design') {
+      setGraphicSub('all');
     }
     onChangeCategory(cat);
   };
 
+  const handleSelectSubFilter = (sub: GraphicSubFilterId) => {
+    if (sub === graphicSub) return;
+    captureFlip();
+    setGraphicSub(sub);
+  };
+
   const handleSelectLayout = (mode: LayoutMode) => {
     if (mode === layoutMode) return;
-    if (gridRef.current) {
-      flipStateRef.current = Flip.getState(gridRef.current.querySelectorAll('.pg-card'));
-    }
+    captureFlip();
     setLayoutMode(mode);
   };
 
-  // Run GSAP Flip animation after DOM updates from filter or layout change
+  const openProjectModal = (project: GalleryProject) => {
+    setModalSlideIdx(0);
+    setSelectedProject(project);
+  };
+
+  // GSAP Flip transition whenever category, sub-filter, or layout changes
   useLayoutEffect(() => {
     const state = flipStateRef.current;
     if (!state || !gridRef.current) return;
@@ -60,34 +92,34 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
       targets: gridRef.current.querySelectorAll('.pg-card'),
       duration: 0.72,
       ease: 'power3.inOut',
-      stagger: 0.035,
+      stagger: 0.025,
       absolute: true,
       nested: true,
       onEnter: (elements) =>
         gsap.fromTo(
           elements,
-          { opacity: 0, scale: 0.88, filter: 'blur(8px)' },
+          { opacity: 0, scale: 0.9, filter: 'blur(8px)' },
           {
             opacity: 1,
             scale: 1,
             filter: 'blur(0px)',
-            duration: 0.55,
+            duration: 0.52,
             ease: 'power3.out',
           }
         ),
       onLeave: (elements) =>
         gsap.to(elements, {
           opacity: 0,
-          scale: 0.88,
+          scale: 0.9,
           filter: 'blur(6px)',
-          duration: 0.35,
+          duration: 0.3,
           ease: 'power2.in',
         }),
       onComplete: () => {
         ScrollTrigger.refresh();
       },
     });
-  }, [activeCategory, layoutMode]);
+  }, [activeCategory, graphicSub, layoutMode]);
 
   // GSAP ScrollTrigger clip-path unveil + inner image parallax scrub
   useEffect(() => {
@@ -106,8 +138,8 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
             y: 0,
             opacity: 1,
             clipPath: 'inset(0% 0% 0% 0% round 22px)',
-            duration: 0.85,
-            delay: (index % 3) * 0.06,
+            duration: 0.8,
+            delay: (index % 3) * 0.05,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: card,
@@ -121,16 +153,16 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
         if (img) {
           gsap.fromTo(
             img,
-            { yPercent: -6, scale: 1.14 },
+            { yPercent: -5, scale: 1.12 },
             {
-              yPercent: 6,
-              scale: 1.14,
+              yPercent: 5,
+              scale: 1.12,
               ease: 'none',
               scrollTrigger: {
                 trigger: card,
                 start: 'top bottom',
                 end: 'bottom top',
-                scrub: 0.8,
+                scrub: 0.85,
               },
             }
           );
@@ -141,15 +173,31 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
     return () => ctx.revert();
   }, []);
 
-  // Close lightbox on Escape
+  // Keyboard controls inside lightbox (Esc + Left/Right slides)
   useEffect(() => {
     if (!selectedProject) return;
+    const slides = selectedProject.galleryImages?.length
+      ? selectedProject.galleryImages
+      : [selectedProject.image];
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelectedProject(null);
+      if (slides.length > 1 && e.key === 'ArrowRight') {
+        setModalSlideIdx((i) => (i + 1) % slides.length);
+      }
+      if (slides.length > 1 && e.key === 'ArrowLeft') {
+        setModalSlideIdx((i) => (i - 1 + slides.length) % slides.length);
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedProject]);
+
+  const modalSlides = selectedProject
+    ? selectedProject.galleryImages?.length
+      ? selectedProject.galleryImages
+      : [selectedProject.image]
+    : [];
 
   return (
     <section id="gallery" ref={sectionRef} className="section-block pg-section">
@@ -168,7 +216,7 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
                   />
                 </svg>
               </span>
-              <span className="micro-label">PROJECT GALLERIES · GSAP FLIP + SCROLLTRIGGER</span>
+              <span className="micro-label">PROJECT ARCHIVE · GSAP FLIP + SCROLLTRIGGER</span>
             </div>
 
             <KineticHeading
@@ -211,7 +259,7 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
           </div>
         </div>
 
-        {/* Category Filter Tabs (Graphic Design / Videography / Photography / Web Design) */}
+        {/* Main Category Tabs */}
         <div className="pg-tabs-bar" role="tablist" aria-label="Project categories">
           {GALLERY_CATEGORIES.map((tab) => {
             const isActive = activeCategory === tab.id;
@@ -231,71 +279,121 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
           })}
         </div>
 
+        {/* Contextual Sub-Filters for Graphic Design (Full Projects / SLIIT / Brands / School & Other) */}
+        {activeCategory === 'graphic-design' && (
+          <div className="pg-subtabs-bar" role="tablist" aria-label="Graphic design groups">
+            {GRAPHIC_SUB_TABS.map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                role="tab"
+                aria-selected={graphicSub === sub.id}
+                className={`pg-subtab${graphicSub === sub.id ? ' is-active' : ''}`}
+                onClick={() => handleSelectSubFilter(sub.id)}
+              >
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Interactive Flip + ScrollTrigger Gallery Grid */}
-        <div
-          ref={gridRef}
-          className={`pg-grid pg-layout-${layoutMode} velocity-react`}
-        >
-          {visibleProjects.map((project) => (
-            <button
-              key={project.id}
-              type="button"
-              data-flip-id={project.id}
-              className={`pg-card pg-aspect-${project.aspect}`}
-              onClick={() => setSelectedProject(project)}
-              aria-label={`Inspect ${project.title} - ${project.categoryLabel}`}
-            >
-              <div className="pg-card-media">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="pg-card-img"
-                  loading="lazy"
-                />
-                <div className="pg-card-scrim" />
-              </div>
+        <div ref={gridRef} className={`pg-grid pg-layout-${layoutMode} velocity-react`}>
+          {visibleProjects.map((project) => {
+            const isVideo = project.category === 'videography';
+            const slideCount = project.galleryImages?.length ?? 1;
 
-              <div className="pg-card-top">
-                <span className="pg-card-badge">{project.categoryLabel}</span>
-                <span className="pg-card-code">{project.code}</span>
-              </div>
+            return (
+              <button
+                key={project.id}
+                type="button"
+                data-flip-id={project.id}
+                className={`pg-card pg-aspect-${project.aspect}${isVideo ? ' is-video-card' : ''}${
+                  project.isProject ? ' is-case-project' : ''
+                }`}
+                onClick={() => openProjectModal(project)}
+                aria-label={`Preview ${project.title} - ${project.categoryLabel}`}
+              >
+                <div className="pg-card-media">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="pg-card-img"
+                    loading="lazy"
+                  />
+                  <div className="pg-card-scrim" />
+                </div>
 
-              <div className="pg-card-bottom">
-                <div className="pg-card-text">
-                  <h3>{project.title}</h3>
-                  <span>
-                    {project.client} · {project.year}
+                {/* Top Social Platform + Project Stack Badge */}
+                <div className="pg-card-top">
+                  <span className="pg-social-pill">
+                    <span className="pg-social-dot" />
+                    <span>{project.primaryPlatform}</span>
+                    {project.mediaFormat && (
+                      <span className="pg-format-sep">· {project.mediaFormat}</span>
+                    )}
+                  </span>
+                  <span className="pg-card-code">
+                    {slideCount > 1 ? `${slideCount} IMGS` : project.code}
                   </span>
                 </div>
-                <span className="pg-card-arrow" aria-hidden="true">
-                  ↗
-                </span>
-              </div>
-            </button>
-          ))}
+
+                {/* Center Frosted Play Badge for Videography Previews */}
+                {isVideo && (
+                  <div className="pg-play-badge" aria-hidden="true">
+                    <span>▶</span>
+                  </div>
+                )}
+
+                {/* Bottom Glass Caption */}
+                <div className="pg-card-bottom">
+                  <div className="pg-card-text">
+                    <h3>{project.title}</h3>
+                    <span>
+                      {project.client} · {project.socialHandle}
+                    </span>
+                  </div>
+                  <span className="pg-card-arrow" aria-hidden="true">
+                    {isVideo ? '▶' : '↗'}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Bottom Archive CTA Strip */}
+        {/* Social Media Channels Quick Strip */}
         <div className="pg-footer-strip glass-panel">
           <div>
-            <span className="micro-label">WANT TO SEE MORE RAW FILES &amp; VIDEOS?</span>
+            <span className="micro-label">DIRECT SOCIAL ARCHIVES &amp; BEHANCE POSTER GALLERY</span>
             <p>
-              Browse the full Behance showcase or open the live Google Drive samples folder for
-              high-resolution reels and posters.
+              Explore all 25 Graphic Design works, 7 Photography series, live social posts, Behance
+              Poster Design archive, and Google Drive video reels.
             </p>
           </div>
           <div className="pg-footer-actions">
-            <a href={BRAND.driveSamples} target="_blank" rel="noreferrer" className="pill-btn">
-              Google Drive Samples ↗
+            <a href={BRAND.instagram} target="_blank" rel="noreferrer" className="pill-btn">
+              Instagram ↗
             </a>
-            <a href={BRAND.behance} target="_blank" rel="noreferrer" className="pill-btn pill-btn-solid">
-              Behance Showcase ↗
+            <a href={BRAND.behancePosters} target="_blank" rel="noreferrer" className="pill-btn">
+              Behance Posters ↗
+            </a>
+            <a href={BRAND.youtube} target="_blank" rel="noreferrer" className="pill-btn">
+              YouTube ↗
+            </a>
+            <a
+              href={BRAND.driveSamples}
+              target="_blank"
+              rel="noreferrer"
+              className="pill-btn pill-btn-solid"
+            >
+              Drive Reels ↗
             </a>
           </div>
         </div>
       </div>
 
-      {/* Portal Lightbox Modal (fixed cleanly outside ScrollSmoother) */}
+      {/* Portal Multi-Slide Case Study & Social Media Preview Modal */}
       {selectedProject &&
         createPortal(
           <div
@@ -305,10 +403,7 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
             aria-label={selectedProject.title}
             onClick={() => setSelectedProject(null)}
           >
-            <div
-              className="pg-modal glass-panel"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="pg-modal glass-panel" onClick={(e) => e.stopPropagation()}>
               <button
                 type="button"
                 className="pg-modal-close"
@@ -317,9 +412,103 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
               >
                 ✕
               </button>
-              <div className="pg-modal-media">
-                <img src={selectedProject.image} alt={selectedProject.title} />
+
+              {/* Left: Social Preview Header + Multi-Slide Image Viewer or Live YouTube Embed */}
+              <div className="pg-modal-media-col">
+                <div className="pg-social-preview-head">
+                  <div className="pg-social-avatar">t</div>
+                  <div>
+                    <strong>{selectedProject.socialHandle}</strong>
+                    <span>
+                      {selectedProject.primaryPlatform} · {selectedProject.client}
+                    </span>
+                  </div>
+                  <span className="pg-featured-badge">
+                    {selectedProject.isProject ? 'PROJECT CASE STUDY' : 'SOCIAL PREVIEW'}
+                  </span>
+                </div>
+
+                {selectedProject.youtubeEmbedId ? (
+                  <div className="pg-modal-video-wrap">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${selectedProject.youtubeEmbedId}?rel=0`}
+                      title={selectedProject.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div className="pg-modal-media">
+                      <img
+                        src={modalSlides[modalSlideIdx] || selectedProject.image}
+                        alt={`${selectedProject.title} - slide ${modalSlideIdx + 1}`}
+                      />
+
+                      {modalSlides.length > 1 && (
+                        <>
+                          <button
+                            type="button"
+                            className="pg-slide-arrow pg-slide-prev"
+                            onClick={() =>
+                              setModalSlideIdx(
+                                (i) => (i - 1 + modalSlides.length) % modalSlides.length
+                              )
+                            }
+                            aria-label="Previous project image"
+                          >
+                            ‹
+                          </button>
+                          <button
+                            type="button"
+                            className="pg-slide-arrow pg-slide-next"
+                            onClick={() =>
+                              setModalSlideIdx((i) => (i + 1) % modalSlides.length)
+                            }
+                            aria-label="Next project image"
+                          >
+                            ›
+                          </button>
+                          <span className="pg-slide-counter">
+                            0{modalSlideIdx + 1} / 0{modalSlides.length}
+                          </span>
+                        </>
+                      )}
+
+                      {selectedProject.category === 'videography' && (
+                        <a
+                          href={selectedProject.href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="pg-modal-play-overlay"
+                        >
+                          <span className="pg-modal-play-icon">▶</span>
+                          <span>Watch Reel on {selectedProject.primaryPlatform} ↗</span>
+                        </a>
+                      )}
+                    </div>
+
+                    {/* Clickable Thumbnail Strip for Multi-Slide Projects & Photo Shoots */}
+                    {modalSlides.length > 1 && (
+                      <div className="pg-thumb-strip">
+                        {modalSlides.map((src, idx) => (
+                          <button
+                            key={src}
+                            type="button"
+                            className={`pg-thumb${idx === modalSlideIdx ? ' is-active' : ''}`}
+                            onClick={() => setModalSlideIdx(idx)}
+                            aria-label={`View slide ${idx + 1}`}
+                          >
+                            <img src={src} alt="" loading="lazy" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
+
+              {/* Right: Project Story + Direct Social Links */}
               <div className="pg-modal-body">
                 <span className="micro-label">
                   {selectedProject.code} · {selectedProject.categoryLabel} · {selectedProject.year}
@@ -327,28 +516,28 @@ const ProjectGallery = ({ activeCategory, onChangeCategory }: ProjectGalleryProp
                 <h3 className="reina-display">{selectedProject.title.toLowerCase()}</h3>
                 <p className="pg-modal-client">{selectedProject.client}</p>
                 <p className="pg-modal-summary">{selectedProject.summary}</p>
+
                 <div className="pg-modal-tools">
                   {selectedProject.tools.map((tool) => (
                     <span key={tool}>{tool}</span>
                   ))}
                 </div>
-                <div className="pg-modal-actions">
-                  <a
-                    href={selectedProject.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="pill-btn pill-btn-solid"
-                  >
-                    Open Project ↗
-                  </a>
-                  <a
-                    href={BRAND.driveSamples}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="pill-btn"
-                  >
-                    All Samples ↗
-                  </a>
+
+                <div className="pg-modal-social-block">
+                  <span className="micro-label">OPEN SOCIAL PREVIEW &amp; LINKS</span>
+                  <div className="pg-modal-actions">
+                    {selectedProject.socialLinks.map((sl, idx) => (
+                      <a
+                        key={`${sl.platform}-${sl.handle}`}
+                        href={sl.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`pill-btn${idx === 0 ? ' pill-btn-solid' : ''}`}
+                      >
+                        {sl.platform} ↗
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

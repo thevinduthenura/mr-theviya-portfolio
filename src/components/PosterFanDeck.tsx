@@ -9,7 +9,7 @@ import './PosterFanDeck.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CATEGORIES = ['All', 'Brand Identity', 'Campaign', 'Video & VFX', 'Art Direction'] as const;
+const CATEGORIES = ['All', 'Campaign', 'Merch & Apparel', 'Editorial'] as const;
 
 const PosterFanDeck = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
