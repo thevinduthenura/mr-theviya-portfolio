@@ -1,6 +1,8 @@
 export type SectionId =
   | 'home'
   | 'projects'
+  | 'photography'
+  | 'videography'
   | 'gallery'
   | 'archive'
   | 'reel'
@@ -16,6 +18,8 @@ export type GalleryCategoryId =
   | 'web-design';
 
 export type GraphicSubFilterId = 'all' | 'projects' | 'sliit' | 'clients' | 'other';
+
+export type DesignTabId = GraphicSubFilterId | 'web-design';
 
 export type SocialPlatform =
   | 'Instagram'

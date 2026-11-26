@@ -281,8 +281,27 @@
 }
 
 @media (max-width: 620px) {
+  .ed-footer-hero {
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+
+  .ed-footer-hero-right {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .ed-footer-hero-right .pill-btn {
+    width: 100%;
+  }
+
   .ed-footer-grid {
     grid-template-columns: 1fr;
     gap: 28px;
+  }
+
+  .ed-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

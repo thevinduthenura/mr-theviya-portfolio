@@ -57,11 +57,11 @@ export const BRAND = {
 
 export const NAV_ITEMS: NavItem[] = [
   { id: 'home', label: 'Home' },
-  { id: 'gallery', label: 'Gallery' },
+  { id: 'photography', label: 'Photos' },
+  { id: 'videography', label: 'Reels' },
+  { id: 'gallery', label: 'Design' },
   { id: 'archive', label: 'Archive' },
-  { id: 'reel', label: 'Reel' },
   { id: 'services', label: 'Services' },
-  { id: 'about', label: 'About' },
   { id: 'contact', label: 'Contact' },
 ];
 
@@ -150,8 +150,8 @@ export const GALLERY_CATEGORIES: GalleryCategoryTab[] = [
   {
     id: 'photography',
     label: 'Photography',
-    countLabel: '07',
-    tagline: 'kollupitiya live, convocation, suharya, get 26, blue beach, doctor band & portraits',
+    countLabel: '95',
+    tagline: '7 real dslr shoots (95 frames) - kollupitiya, convocation, suharya, get 26, blue beach, doctor band & portraits',
   },
   {
     id: 'videography',
@@ -888,7 +888,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
   },
 
   // =========================================================================
-  // PHOTOGRAPHY - ALL 7 REAL USER SHOOTS (Each Multi-Shot + Linked to Social!)
+  // PHOTOGRAPHY - ALL 7 REAL USER SHOOTS (95 Full-Folder Frames + Social!)
   // =========================================================================
   {
     id: 'ph-kollupitiya',
@@ -901,19 +901,18 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     year: '2026',
     aspect: 'tall',
     image: '/images/projects/photography/kollupitiya-1.jpg',
-    galleryImages: [
-      '/images/projects/photography/kollupitiya-1.jpg',
-      '/images/projects/photography/kollupitiya-2.jpg',
-      '/images/projects/photography/kollupitiya-3.jpg',
-    ],
+    galleryImages: Array.from(
+      { length: 5 },
+      (_, i) => `/images/projects/photography/kollupitiya-${i + 1}.jpg`
+    ),
     href: BRAND.instagram,
     tools: ['Low-Light Prime', 'Monochrome Grade', 'Live Stage'],
     summary:
-      'Moody monochrome and dramatic stage concert photography captured live in Kollupitiya with crisp shutter freeze and signature Mr. Theviya tonal grading.',
+      'Complete 5-frame moody monochrome and dramatic stage concert set captured live in Kollupitiya with crisp shutter freeze and signature Mr. Theviya tonal grading.',
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
-    mediaFormat: '3 SHOTS · LIVE STAGE',
+    mediaFormat: '5 SHOTS · LIVE STAGE',
     socialLinks: [
       { platform: 'Instagram', handle: '@mr.theviya', href: BRAND.instagram },
       { platform: 'Pinterest', handle: '@mrtheviya', href: BRAND.pinterest },
@@ -931,19 +930,18 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     year: '2026',
     aspect: 'tall',
     image: '/images/projects/photography/doctor-1.jpg',
-    galleryImages: [
-      '/images/projects/photography/doctor-1.jpg',
-      '/images/projects/photography/doctor-2.jpg',
-      '/images/projects/photography/doctor-3.jpg',
-    ],
+    galleryImages: Array.from(
+      { length: 7 },
+      (_, i) => `/images/projects/photography/doctor-${i + 1}.jpg`
+    ),
     href: BRAND.instagram,
     tools: ['Concert Photography', 'Warm Grade', 'Telephoto'],
     summary:
-      'Golden amber live-band performance coverage of Doctor Band balancing hazy atmospheric stage beams with razor-sharp vocalist emotion.',
+      'Complete 7-frame golden amber live-band performance coverage of Doctor Band balancing hazy atmospheric stage beams with razor-sharp vocalist emotion.',
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
-    mediaFormat: '3 SHOTS · CONCERT',
+    mediaFormat: '7 SHOTS · CONCERT',
     socialLinks: [
       { platform: 'Instagram', handle: '@mr.theviya', href: BRAND.instagram },
       { platform: 'Facebook', handle: 'mr.theviya', href: BRAND.facebook },
@@ -961,19 +959,18 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     year: '2026',
     aspect: 'square',
     image: '/images/projects/photography/convocation-1.jpg',
-    galleryImages: [
-      '/images/projects/photography/convocation-1.jpg',
-      '/images/projects/photography/convocation-2.jpg',
-      '/images/projects/photography/convocation-3.jpg',
-    ],
+    galleryImages: Array.from(
+      { length: 22 },
+      (_, i) => `/images/projects/photography/convocation-${i + 1}.jpg`
+    ),
     href: BRAND.instagram,
     tools: ['Portrait Prime', 'Natural Light', 'Color Retouch'],
     summary:
-      'Timeless graduation and convocation portrait series capturing proud milestone moments with crisp shallow depth of field and refined skin tones.',
+      'Complete 22-frame graduation and convocation portrait collection capturing proud milestone moments with crisp shallow depth of field and refined skin tones.',
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
-    mediaFormat: '3 SHOTS · PORTRAITS',
+    mediaFormat: '22 SHOTS · PORTRAITS',
     socialLinks: [
       { platform: 'Instagram', handle: '@mr.theviya', href: BRAND.instagram },
       { platform: 'Facebook', handle: 'mr.theviya', href: BRAND.facebook },
@@ -990,19 +987,18 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     year: '2026',
     aspect: 'square',
     image: '/images/projects/photography/get26-1.jpg',
-    galleryImages: [
-      '/images/projects/photography/get26-1.jpg',
-      '/images/projects/photography/get26-2.jpg',
-      '/images/projects/photography/get26-3.jpg',
-    ],
+    galleryImages: Array.from(
+      { length: 15 },
+      (_, i) => `/images/projects/photography/get26-${i + 1}.jpg`
+    ),
     href: BRAND.instagram,
     tools: ['Event Coverage', 'Stage Lighting', 'Editorial'],
     summary:
-      "High-energy live event photography from Get '26 capturing Infinity, BnS, and dynamic crowd lighting across the main stage.",
+      "Complete 15-frame live event coverage from Get '26 capturing Infinity, BnS, and dynamic concert stage lighting across the main performance.",
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
-    mediaFormat: '3 SHOTS · LIVE EVENT',
+    mediaFormat: '15 SHOTS · LIVE EVENT',
     socialLinks: [
       { platform: 'Instagram', handle: '@mr.theviya', href: BRAND.instagram },
       { platform: 'Facebook', handle: 'mr.theviya', href: BRAND.facebook },
@@ -1011,26 +1007,25 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
   {
     id: 'ph-suharya',
     code: 'PH · 05',
-    title: 'Suharya - Cultural & Stage Coverage',
+    title: 'Suharya - Book Launch Event Coverage',
     category: 'photography',
     categoryLabel: 'Photography',
-    client: 'Suharya Live',
+    client: 'Suharya Live Event',
     year: '2026',
     aspect: 'square',
     image: '/images/projects/photography/suharya-1.jpg',
-    galleryImages: [
-      '/images/projects/photography/suharya-1.jpg',
-      '/images/projects/photography/suharya-2.jpg',
-      '/images/projects/photography/suharya-3.jpg',
-    ],
+    galleryImages: Array.from(
+      { length: 20 },
+      (_, i) => `/images/projects/photography/suharya-${i + 1}.jpg`
+    ),
     href: BRAND.instagram,
-    tools: ['Cultural Event', 'Low-Light NR', 'Documentary'],
+    tools: ['Event Documentary', 'Candid Portraits', 'Color & B&W'],
     summary:
-      'Expressive performance and cultural event photography from Suharya with crisp low-light detail and rich dramatic shadows.',
+      'Curated 20-frame full-story documentary selection from the Suharya book launch event - covering the ceremonial oil lamp, speeches, candid moments, and family portraits.',
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
-    mediaFormat: '3 SHOTS · CULTURAL',
+    mediaFormat: '20 SHOTS · EVENT STORY',
     socialLinks: [
       { platform: 'Instagram', handle: '@mr.theviya', href: BRAND.instagram },
       { platform: 'Facebook', handle: 'mr.theviya', href: BRAND.facebook },
@@ -1046,19 +1041,18 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     year: '2026',
     aspect: 'wide',
     image: '/images/projects/photography/blue-beach-1.jpg',
-    galleryImages: [
-      '/images/projects/photography/blue-beach-1.jpg',
-      '/images/projects/photography/blue-beach-2.jpg',
-      '/images/projects/photography/blue-beach-3.jpg',
-    ],
+    galleryImages: Array.from(
+      { length: 9 },
+      (_, i) => `/images/projects/photography/blue-beach-${i + 1}.jpg`
+    ),
     href: BRAND.pinterest,
     tools: ['Coastal Light', 'Color & B&W', 'Editorial'],
     summary:
-      'Sunlit coastal storytelling and black-and-white frames captured at Blue Beach with crisp horizon lines and calm cinematic color palettes.',
+      'Complete 9-frame sunlit coastal storytelling and black-and-white series captured at Blue Beach with crisp horizon lines and calm cinematic color palettes.',
     socialFeatured: true,
     primaryPlatform: 'Pinterest',
     socialHandle: '@mrtheviya',
-    mediaFormat: '3 SHOTS · COASTAL',
+    mediaFormat: '9 SHOTS · COASTAL',
     socialLinks: [
       { platform: 'Pinterest', handle: '@mrtheviya', href: BRAND.pinterest },
       { platform: 'Instagram', handle: '@mr.theviya', href: BRAND.instagram },
@@ -1074,19 +1068,18 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     year: '2026',
     aspect: 'square',
     image: '/images/projects/photography/christine-1.jpg',
-    galleryImages: [
-      '/images/projects/photography/christine-1.jpg',
-      '/images/projects/photography/christine-2.jpg',
-      '/images/projects/photography/christine-3.jpg',
-    ],
+    galleryImages: Array.from(
+      { length: 17 },
+      (_, i) => `/images/projects/photography/christine-${i + 1}.jpg`
+    ),
     href: BRAND.instagram,
     tools: ['Sony ZV-E', 'Portrait Retouch', 'Warm Tones'],
     summary:
-      'Intimate lifestyle and celebration portraits shot with soft bokeh, flattering warm light, and editorial color grading.',
+      'Complete 17-frame intimate lifestyle and celebration portrait collection shot with soft bokeh, flattering warm light, and editorial color grading.',
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
-    mediaFormat: '3 SHOTS · PORTRAIT',
+    mediaFormat: '17 SHOTS · PORTRAIT',
     socialLinks: [
       { platform: 'Instagram', handle: '@mr.theviya', href: BRAND.instagram },
       { platform: 'Facebook', handle: 'mr.theviya', href: BRAND.facebook },

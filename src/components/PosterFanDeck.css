@@ -439,6 +439,18 @@
 }
 
 @media (max-width: 560px) {
+  .fan-stage {
+    min-height: 360px;
+  }
+
+  .fan-card {
+    width: min(230px, 66vw);
+  }
+
+  .fan-active-summary {
+    padding: 16px;
+  }
+
   .fan-bottom-controls {
     flex-direction: column;
     align-items: center;

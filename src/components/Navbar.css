@@ -300,14 +300,40 @@
 }
 
 @media (max-width: 960px) {
+  .ed-nav {
+    padding: max(10px, env(safe-area-inset-top, 10px)) 16px 10px;
+  }
+
+  .ed-brand-img {
+    height: 22px;
+  }
+
   .ed-brand-status,
   .ed-nav-pill,
-  .ed-icon-circle,
-  .ed-nav-cta {
+  .ed-icon-circle {
     display: none;
+  }
+
+  .ed-nav-cta {
+    padding: 7px 13px;
+    font-size: 0.66rem;
+    min-height: 38px;
   }
 
   .ed-burger {
     display: inline-flex;
+    width: 42px;
+    height: 42px;
+  }
+
+  .ed-drawer-inner {
+    height: 100dvh;
+    padding: max(20px, env(safe-area-inset-top, 20px)) 20px max(28px, env(safe-area-inset-bottom, 28px));
+    overflow-y: auto;
+  }
+
+  .ed-drawer-link {
+    font-size: 1.4rem;
+    padding: 12px 0;
   }
 }

@@ -6,6 +6,8 @@ import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import StatementShowcase from './components/StatementShowcase';
+import ScrubbedBentoGallery from './components/ScrubbedBentoGallery';
+import HorizontalScrollGallery from './components/HorizontalScrollGallery';
 import ProjectGallery from './components/ProjectGallery';
 import PosterFanDeck from './components/PosterFanDeck';
 import PerspectiveReel from './components/PerspectiveReel';
@@ -14,13 +16,15 @@ import Clients from './components/Clients';
 import ImpactAbout from './components/ImpactAbout';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import type { GalleryCategoryId, SectionId } from './types/portfolio';
+import type { DesignTabId, GalleryCategoryId, SectionId } from './types/portfolio';
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 const SECTION_IDS: SectionId[] = [
   'home',
   'projects',
+  'photography',
+  'videography',
   'gallery',
   'archive',
   'reel',
@@ -39,7 +43,7 @@ const TAG_TO_CATEGORY: Record<string, GalleryCategoryId> = {
 
 const App = () => {
   const [activeSection, setActiveSection] = useState<SectionId>('home');
-  const [activeGalleryCategory, setActiveGalleryCategory] = useState<GalleryCategoryId>('all');
+  const [activeDesignTab, setActiveDesignTab] = useState<DesignTabId>('projects');
   const [preselectedService, setPreselectedService] = useState<string>('');
   const progressRef = useRef<HTMLDivElement | null>(null);
   const smootherRef = useRef<ScrollSmoother | null>(null);
@@ -66,7 +70,20 @@ const App = () => {
 
   const handleJumpToCategory = useCallback(
     (cat: GalleryCategoryId) => {
-      setActiveGalleryCategory(cat);
+      if (cat === 'photography') {
+        scrollToSection('photography');
+        return;
+      }
+      if (cat === 'videography') {
+        scrollToSection('videography');
+        return;
+      }
+      if (cat === 'web-design') {
+        setActiveDesignTab('web-design');
+        scrollToSection('gallery');
+        return;
+      }
+      setActiveDesignTab(cat === 'graphic-design' ? 'projects' : 'all');
       scrollToSection('gallery');
     },
     [scrollToSection]
@@ -84,9 +101,13 @@ const App = () => {
     [handleJumpToCategory, scrollToSection]
   );
 
-  // Initialize GSAP ScrollSmoother + Scroll Progress + Velocity Motion Blur
+  // Initialize GSAP ScrollSmoother (desktop only) + Scroll Progress + Velocity Motion Blur
   useEffect(() => {
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobileOrTouch =
+      window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 960;
     const proxy = { skew: 0, blur: 0 };
 
     const applyVars = () => {
@@ -94,13 +115,14 @@ const App = () => {
       document.documentElement.style.setProperty('--scroll-blur', `${proxy.blur.toFixed(2)}px`);
     };
 
-    if (!prefersReduced) {
+    // Use native 120Hz momentum scroll on mobile/touch; reserve ScrollSmoother for desktop
+    if (!prefersReduced && !isMobileOrTouch) {
       smootherRef.current = ScrollSmoother.create({
         wrapper: '#smooth-wrapper',
         content: '#smooth-content',
         smooth: 1.35,
         effects: true,
-        smoothTouch: 0.1,
+        smoothTouch: false,
       });
     }
 
@@ -112,7 +134,7 @@ const App = () => {
           gsap.set(progressRef.current, { scaleX: self.progress });
         }
 
-        if (prefersReduced) return;
+        if (prefersReduced || isMobileOrTouch) return;
 
         const velocity = self.getVelocity();
         const targetSkew = gsap.utils.clamp(-2.6, 2.6, velocity / -780);
@@ -158,7 +180,12 @@ const App = () => {
       });
     });
 
+    const refreshTimer = window.setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 300);
+
     return () => {
+      window.clearTimeout(refreshTimer);
       triggers.forEach((t) => t?.kill());
     };
   }, []);
@@ -190,9 +217,11 @@ const App = () => {
               <main>
                 <Hero onNavigate={scrollToSection} onSelectServiceTag={handleSelectHeroTag} />
                 <StatementShowcase />
+                <ScrubbedBentoGallery />
+                <HorizontalScrollGallery />
                 <ProjectGallery
-                  activeCategory={activeGalleryCategory}
-                  onChangeCategory={setActiveGalleryCategory}
+                  activeTab={activeDesignTab}
+                  onChangeTab={setActiveDesignTab}
                 />
                 <PosterFanDeck />
                 <PerspectiveReel />
