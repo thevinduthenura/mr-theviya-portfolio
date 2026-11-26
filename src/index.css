@@ -1,140 +1,447 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+/* ==========================================================================
+   MR. THEVIYA - FULL DARK MODE EDITORIAL + GSAP MOTION DESIGN SYSTEM
+   ScrollSmoother + ScrollTrigger + Flip + Lowercase Reina Neue + Glassmorphism
+   ========================================================================== */
 
-/* ── DESIGN TOKENS ── */
-:root {
-  --bg:          #0c0c0c;
-  --text:        rgba(235, 235, 235, 0.8);
-  --text-bright: #EBEBEB;
-  --text-muted:  rgba(235, 235, 235, 0.4);
-  --accent:      #BB4A0D;
-  --accent-glow: rgba(187, 74, 13, 0.2);
-  --glass-bg:    rgba(255, 255, 255, 0.06);
-  --glass-border:rgba(229, 229, 229, 0.5);
-  --card-bg:     rgba(12, 12, 12, 0.85);
-
-  /* Font aliases — matches Figma fonts as closely as possible */
-  --font-display: 'Cormorant Garamond', serif;       /* Reina Neue → italic serif */
-  --font-label:   'Space Grotesk', sans-serif;       /* Degular Display */
-  --font-ui:      'Outfit', sans-serif;              /* Ariom */
-  --font-body:    'DM Sans', sans-serif;
+@font-face {
+  font-family: 'Reina Neue';
+  src: url('/fonts/ReinaNeue-Roman.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
-/* ── RESET ── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@font-face {
+  font-family: 'Reina Neue';
+  src: url('/fonts/ReinaNeue-Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
 
-html { scroll-behavior: smooth; }
+@font-face {
+  font-family: 'Reina Neue';
+  src: url('/fonts/ReinaNeue-LightItalic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Reina Neue';
+  src: url('/fonts/ReinaNeue-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Reina Neue Display';
+  src: url('/fonts/ReinaNeueDisplay-Roman.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Reina Neue Display';
+  src: url('/fonts/ReinaNeueDisplay-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg-void: #050202;
+  --bg-page: #0a0707;
+  --bg-surface: #120c0c;
+  --bg-surface-elevated: #191110;
+  --bg-glass: rgba(244, 237, 232, 0.048);
+  --bg-glass-strong: rgba(244, 237, 232, 0.088);
+
+  --ink-primary: #f4ede8;
+  --ink-muted: rgba(244, 237, 232, 0.34);
+  --ink-body: #a69891;
+  --ink-subtle: rgba(244, 237, 232, 0.58);
+
+  --accent: #ff421a;
+  --accent-bright: #ff6036;
+  --accent-crimson: #9e1508;
+  --accent-champagne: #dac5a7;
+  --accent-glow: rgba(255, 66, 26, 0.34);
+
+  --border-hairline: rgba(244, 237, 232, 0.09);
+  --border-warm: rgba(218, 197, 167, 0.18);
+  --border-accent: rgba(255, 66, 26, 0.44);
+
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 36px;
+  --radius-pill: 9999px;
+
+  --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Reina Neue', 'Reina Neue Display', 'Instrument Serif', Georgia, serif;
+  --font-serif-display: 'Reina Neue Display', 'Reina Neue', 'Instrument Serif', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --shadow-card: 0 24px 60px rgba(0, 0, 0, 0.65);
+  --shadow-glow: 0 28px 80px rgba(184, 28, 12, 0.3);
+
+  --scroll-skew: 0deg;
+  --scroll-blur: 0px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--bg-void);
+  color: var(--ink-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark;
+}
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
+  min-height: 100vh;
   overflow-x: hidden;
-  line-height: 1.6;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(168, 26, 10, 0.34), transparent 65%),
+    radial-gradient(ellipse 55% 40% at 95% 28%, rgba(138, 22, 9, 0.2), transparent 65%),
+    radial-gradient(ellipse 55% 40% at 5% 70%, rgba(128, 18, 8, 0.18), transparent 65%),
+    var(--bg-void);
+  color: var(--ink-primary);
+  line-height: 1.55;
 }
 
-a { text-decoration: none; color: inherit; }
-ul { list-style: none; }
-
-/* ── CONTAINER ── */
-.container {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 0 80px;
-  position: relative;
-  z-index: 1;
-}
-
-/* ── BACKGROUND EFFECTS ── */
-.bg-glow-container {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: -1;
-  pointer-events: none;
+/* GSAP ScrollSmoother Containers */
+#smooth-wrapper {
   overflow: hidden;
 }
 
-.glow-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(140px);
-  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-}
-.glow-1 { width: 900px; height: 900px; top: -20%; right: -15%; }
-.glow-2 { width: 700px; height: 700px; bottom: 5%; left: -25%; }
-
-.watermark {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-ui);
-  font-size: 256px;
-  font-weight: 700;
-  letter-spacing: -0.07em;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.17);
-  filter: blur(3.8px);
-  white-space: nowrap;
-  line-height: 0.85;
-  text-align: center;
-  user-select: none;
-  pointer-events: none;
+#smooth-content {
+  will-change: transform;
 }
 
-/* ── LAYOUT LINES ── */
-.layout-lines {
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--accent);
+  color: #080404;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(244, 237, 232, 0.18);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* ==========================================================================
+   TOP SCROLL PROGRESS LINE
+   ========================================================================== */
+
+.scroll-progress-bar {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  z-index: 200;
+  background: rgba(244, 237, 232, 0.06);
   pointer-events: none;
-  z-index: -1;
-  border-left: 1px dashed rgba(255,255,255,0.04);
-  border-right: 1px dashed rgba(255,255,255,0.04);
-  max-width: 1440px;
+}
+
+.scroll-progress-fill {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent-crimson), var(--accent), var(--accent-champagne));
+  box-shadow: 0 0 14px var(--accent);
+}
+
+/* ==========================================================================
+   ARCHITECTURAL PAGE SHELL & GLASS UTILITIES
+   ========================================================================== */
+
+.page-shell {
+  position: relative;
+  width: 100%;
+  max-width: 1360px;
   margin: 0 auto;
-  left: 50%; transform: translateX(-50%);
+  padding: 86px 20px 48px;
 }
 
-/* ── SCROLL ANIMATION ── */
-.fade-up {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.fade-up.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ── SECTION LABEL ── */
-.section-label {
+.ruler-strip {
   display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 18px;
+  padding: 0 28px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-hairline);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.ruler-tick {
+  width: 1px;
+  height: 8px;
+  background: rgba(244, 237, 232, 0.35);
+}
+
+.ruler-tick.tall {
+  height: 15px;
+  background: rgba(244, 237, 232, 0.6);
+}
+
+.editorial-frame {
+  position: relative;
+  background: var(--bg-page);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow:
+    0 40px 120px rgba(0, 0, 0, 0.86),
+    0 0 0 1px rgba(255, 66, 26, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Reusable Premium Dark Liquid Glass Panel */
+.glass-panel {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 240, 232, 0.072) 0%,
+    rgba(22, 12, 11, 0.62) 55%,
+    rgba(12, 6, 6, 0.8) 100%
+  );
+  border: 1px solid rgba(255, 224, 206, 0.14);
+  backdrop-filter: blur(22px) saturate(155%);
+  -webkit-backdrop-filter: blur(22px) saturate(155%);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+}
+
+/* Scroll-velocity kinetic skew + subtle motion blur target */
+.velocity-react {
+  transform: skewY(var(--scroll-skew));
+  filter: blur(var(--scroll-blur));
+  will-change: transform, filter;
+}
+
+.section-container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 56px);
+}
+
+.section-block {
+  position: relative;
+  padding: clamp(68px, 8.5vw, 120px) 0;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.editorial-asterisk {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-family: var(--font-ui);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  justify-content: center;
   color: var(--accent);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-.section-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(187,74,13,0.4), transparent);
+  flex-shrink: 0;
 }
 
-.section-title {
+.micro-label {
   font-family: var(--font-display);
-  font-size: clamp(36px, 4vw, 60px);
-  font-style: italic;
-  font-weight: 300;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  color: var(--text-bright);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+  line-height: 1.4;
 }
 
-@media (max-width: 900px) {
-  .container { padding: 0 24px; }
-  .watermark { font-size: 100px; }
+.editorial-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+  text-transform: uppercase;
+  color: var(--ink-primary);
+}
+
+.editorial-display .muted {
+  color: var(--ink-muted);
+}
+
+.editorial-display .accent {
+  color: var(--accent);
+}
+
+/* Reina Neue - STRICTLY LOWERCASE (simple letters only) across entire site */
+.reina-serif,
+.editorial-display .serif-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: lowercase !important;
+  letter-spacing: -0.015em;
+}
+
+.reina-display {
+  font-family: var(--font-serif-display);
+  font-weight: 400;
+  text-transform: lowercase !important;
+  letter-spacing: -0.03em;
+}
+
+/* Inline visual pill embedded inside display typography */
+.inline-pill-media {
+  display: inline-block;
+  vertical-align: middle;
+  width: clamp(58px, 7.5vw, 108px);
+  height: clamp(28px, 3.6vw, 52px);
+  margin: -0.1em 0.18em 0;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  border: 1px solid rgba(255, 66, 26, 0.5);
+  box-shadow: 0 0 32px rgba(255, 66, 26, 0.38);
+  position: relative;
+}
+
+.inline-pill-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.12);
+}
+
+/* Frosted Glass Pill CTA Button */
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-warm);
+  background: rgba(244, 237, 232, 0.055);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--ink-primary);
+  transition:
+    transform 0.35s var(--ease-out),
+    background-color 0.35s var(--ease-out),
+    border-color 0.35s var(--ease-out),
+    box-shadow 0.35s var(--ease-out),
+    color 0.35s ease;
+}
+
+.pill-btn:hover {
+  transform: translateY(-2px);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #090404;
+  box-shadow: 0 14px 36px rgba(255, 66, 26, 0.38);
+}
+
+.pill-btn-solid {
+  background: var(--ink-primary);
+  border-color: var(--ink-primary);
+  color: #090404;
+}
+
+.pill-btn-solid:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #090404;
+}
+
+.circle-arrow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 237, 232, 0.28);
+  background: rgba(244, 237, 232, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--ink-primary);
+  transition:
+    transform 0.35s var(--ease-out),
+    background-color 0.35s var(--ease-out),
+    border-color 0.35s var(--ease-out),
+    color 0.35s var(--ease-out),
+    box-shadow 0.35s ease;
+}
+
+.circle-arrow-btn:hover {
+  transform: scale(1.08) rotate(8deg);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #080404;
+  box-shadow: 0 0 28px rgba(255, 66, 26, 0.45);
+}
+
+@media (max-width: 768px) {
+  .page-shell {
+    padding: 76px 10px 32px;
+  }
+
+  .editorial-frame {
+    border-radius: 22px;
+  }
+
+  .ruler-strip {
+    padding: 0 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .velocity-react {
+    transform: none !important;
+    filter: none !important;
+  }
 }
