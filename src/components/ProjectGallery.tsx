@@ -1,14 +1,15 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { Flip } from 'gsap/Flip';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { BRAND, GALLERY_PROJECTS, GRAPHIC_SUB_TABS } from '../data/portfolio';
 import type { DesignTabId, GalleryProject } from '../types/portfolio';
 import KineticHeading from './KineticHeading';
 import './ProjectGallery.css';
 
-gsap.registerPlugin(Flip, ScrollTrigger);
+gsap.registerPlugin(Flip, ScrollTrigger, ScrollSmoother);
 
 interface ProjectGalleryProps {
   activeTab: DesignTabId;
@@ -30,7 +31,13 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
   const flipStateRef = useRef<Flip.FlipState | null>(null);
-  const touchStartXRef = useRef<number | null>(null);
+  const lbStageRef = useRef<HTMLDivElement | null>(null);
+  const lbTrackRef = useRef<HTMLDivElement | null>(null);
+  const dragStartXRef = useRef<number | null>(null);
+  const dragBaseXRef = useRef<number>(0);
+  const dragOffsetPxRef = useRef<number>(0);
+  const lastWheelMsRef = useRef<number>(0);
+  const lbInitRef = useRef<boolean>(false);
 
   const [expandedId, setExpandedId] = useState<string>('proj-wiramaya');
   const [expandedSlide, setExpandedSlide] = useState<number>(0);
@@ -99,29 +106,90 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
     });
   }, [expandedId, activeTab]);
 
-  // Subtle GSAP ScrollTrigger staggered entrance
+  // Subtle GSAP ScrollTrigger.batch staggered entrance (smooth on both desktop & mobile!)
   useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.ag-item',
-        { y: 36, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.72,
-          stagger: 0.04,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: 'top 84%',
-            once: true,
-          },
-        }
-      );
+      const cards = grid.querySelectorAll('.ag-item');
+      gsap.set(cards, { y: 32, opacity: 0 });
+      ScrollTrigger.batch(cards, {
+        start: 'top 90%',
+        once: true,
+        onEnter: (batch) => {
+          gsap.to(batch, {
+            y: 0,
+            opacity: 1,
+            duration: 0.65,
+            stagger: 0.06,
+            ease: 'power3.out',
+            clearProps: 'transform,opacity',
+          });
+        },
+      });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
+
+  // Pause ScrollSmoother & lock body scroll while project lightbox is open
+  useEffect(() => {
+    if (!lightboxItem) {
+      lbInitRef.current = false;
+      return;
+    }
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const smoother = ScrollSmoother.get();
+    smoother?.paused(true);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      smoother?.paused(false);
+    };
+  }, [lightboxItem]);
+
+  const computeLbCenterX = useCallback((idx: number) => {
+    const stage = lbStageRef.current;
+    const track = lbTrackRef.current;
+    if (!stage || !track) return 0;
+    const target = track.children[idx] as HTMLElement | undefined;
+    if (!target) return 0;
+    return -(target.offsetLeft + target.offsetWidth / 2 - stage.clientWidth / 2);
+  }, []);
+
+  // Smooth GSAP side-scroll glide inside project lightbox with peeking neighbors
+  useEffect(() => {
+    if (!lightboxItem || !lbTrackRef.current || !lbStageRef.current) return;
+    const track = lbTrackRef.current;
+
+    const align = (instant: boolean) => {
+      const targetX = computeLbCenterX(lightboxSlide);
+      dragBaseXRef.current = targetX;
+      if (instant) {
+        gsap.set(track, { x: targetX });
+      } else {
+        gsap.to(track, {
+          x: targetX,
+          duration: 0.62,
+          ease: 'power3.out',
+          overwrite: 'auto',
+        });
+      }
+    };
+
+    if (!lbInitRef.current) {
+      const raf = window.requestAnimationFrame(() => {
+        align(true);
+        lbInitRef.current = true;
+      });
+      return () => window.cancelAnimationFrame(raf);
+    }
+
+    align(false);
+    const onResize = () => align(true);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [lightboxItem, lightboxSlide, computeLbCenterX]);
 
   // Keyboard support in lightbox
   useEffect(() => {
@@ -141,6 +209,55 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
   }, [lightboxItem]);
 
   const lbSlides = lightboxItem ? lightboxItem.galleryImages ?? [lightboxItem.image] : [];
+  const lbCount = lbSlides.length;
+
+  const stepLbSlide = (dir: 1 | -1) => {
+    if (lbCount < 2) return;
+    setLightboxSlide((s) => (s + dir + lbCount) % lbCount);
+  };
+
+  const handleLbWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (lbCount < 2) return;
+    e.stopPropagation();
+    const now = performance.now();
+    if (now - lastWheelMsRef.current < 230) return;
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (Math.abs(delta) < 8) return;
+    lastWheelMsRef.current = now;
+    stepLbSlide(delta > 0 ? 1 : -1);
+  };
+
+  const handleLbPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (lbSlides.length < 2 || (e.target as HTMLElement).closest('button.ag-modal-arrow')) return;
+    dragStartXRef.current = e.clientX;
+    dragOffsetPxRef.current = 0;
+    dragBaseXRef.current = computeLbCenterX(lightboxSlide);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handleLbPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragStartXRef.current === null || !lbTrackRef.current) return;
+    const dx = e.clientX - dragStartXRef.current;
+    dragOffsetPxRef.current = dx;
+    gsap.set(lbTrackRef.current, { x: dragBaseXRef.current + dx });
+  };
+
+  const handleLbPointerUp = () => {
+    if (dragStartXRef.current === null) return;
+    const dx = dragOffsetPxRef.current;
+    dragStartXRef.current = null;
+    dragOffsetPxRef.current = 0;
+    if (Math.abs(dx) > 48) {
+      stepLbSlide(dx < 0 ? 1 : -1);
+    } else if (lbTrackRef.current) {
+      gsap.to(lbTrackRef.current, {
+        x: dragBaseXRef.current,
+        duration: 0.45,
+        ease: 'power3.out',
+        overwrite: 'auto',
+      });
+    }
+  };
 
   return (
     <section id="gallery" ref={sectionRef} className="section-block ag-section">
@@ -314,6 +431,7 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
             aria-modal="true"
             aria-label={lightboxItem.title}
             onClick={() => setLightboxItem(null)}
+            onWheel={handleLbWheel}
           >
             <div className="ag-modal glass-panel" onClick={(e) => e.stopPropagation()}>
               <button
@@ -325,37 +443,44 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
                 ✕
               </button>
               <div
+                ref={lbStageRef}
                 className="ag-modal-stage"
-                onTouchStart={(e) => {
-                  touchStartXRef.current = e.touches[0]?.clientX ?? null;
-                }}
-                onTouchEnd={(e) => {
-                  const startX = touchStartXRef.current;
-                  const endX = e.changedTouches[0]?.clientX;
-                  touchStartXRef.current = null;
-                  if (startX === null || endX === undefined || lbSlides.length < 2) return;
-                  const delta = endX - startX;
-                  if (Math.abs(delta) > 42) {
-                    setLightboxSlide((s) =>
-                      delta < 0
-                        ? (s + 1) % lbSlides.length
-                        : (s - 1 + lbSlides.length) % lbSlides.length
-                    );
-                  }
-                }}
+                onPointerDown={handleLbPointerDown}
+                onPointerMove={handleLbPointerMove}
+                onPointerUp={handleLbPointerUp}
+                onPointerCancel={handleLbPointerUp}
               >
-                <img
-                  src={lbSlides[lightboxSlide] ?? lightboxItem.image}
-                  alt={lightboxItem.title}
-                />
+                <div ref={lbTrackRef} className="ag-modal-track">
+                  {lbSlides.map((src, i) => {
+                    const isCurrent = i === lightboxSlide;
+                    const isAdjacent = Math.abs(i - lightboxSlide) === 1;
+                    return (
+                      <div
+                        key={src}
+                        className={`ag-modal-slide${isCurrent ? ' is-current' : ''}${
+                          isAdjacent ? ' is-adjacent' : ''
+                        }`}
+                        onClick={() => {
+                          if (!isCurrent && Math.abs(dragOffsetPxRef.current) < 8) {
+                            setLightboxSlide(i);
+                          }
+                        }}
+                      >
+                        <img
+                          src={src}
+                          alt={`${lightboxItem.title} - ${i + 1}`}
+                          draggable={false}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
                 {lbSlides.length > 1 && (
                   <>
                     <button
                       type="button"
                       className="ag-modal-arrow prev"
-                      onClick={() =>
-                        setLightboxSlide((s) => (s - 1 + lbSlides.length) % lbSlides.length)
-                      }
+                      onClick={() => stepLbSlide(-1)}
                       aria-label="Previous"
                     >
                       ‹
@@ -363,7 +488,7 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
                     <button
                       type="button"
                       className="ag-modal-arrow next"
-                      onClick={() => setLightboxSlide((s) => (s + 1) % lbSlides.length)}
+                      onClick={() => stepLbSlide(1)}
                       aria-label="Next"
                     >
                       ›

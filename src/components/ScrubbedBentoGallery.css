@@ -41,49 +41,50 @@
   color: var(--ink-body);
 }
 
+/* Isolated Pin Outer Container */
+.sb-pin-outer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
 /* Full-Viewport Pinned Scrubbed Bento Stage */
 .sb-pin-wrap {
   position: relative;
   width: 100%;
   height: 100vh;
-  min-height: 620px;
+  min-height: 600px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 84px 24px 28px;
+  background: #070404;
 }
 
-/* Settled 8-Tile Museum Bento Layout */
+/* Settled 8-Tile Museum Bento Layout (Zero Overlap Guaranteed by CSS Grid) */
 .sb-bento-grid {
   position: relative;
   width: 100%;
   height: 100%;
-  max-width: 1320px;
-  max-height: 820px;
+  max-width: 1240px;
+  max-height: 760px;
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-}
-
-/* Zoomed Start State (Center Tile 3 Fills Viewport Before Scrub) */
-.sb-bento-grid.is-expanded {
-  width: 245vw;
-  height: 235vh;
-  max-width: none;
-  max-height: none;
-  gap: 24px;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  will-change: transform;
 }
 
 .sb-tile {
   position: relative;
+  min-width: 0;
+  min-height: 0;
   border-radius: 18px;
   overflow: hidden;
   background: #120c0c;
   border: 1px solid rgba(244, 237, 232, 0.1);
   padding: 0;
-  will-change: transform;
 }
 
 /* Asymmetric Editorial Bento Areas */
@@ -138,6 +139,22 @@
   transition: transform 0.65s var(--ease-out), filter 0.45s ease;
 }
 
+.sb-tile-3 img {
+  object-position: center 56%;
+}
+
+.sb-tile-6 img {
+  object-position: center 35%;
+}
+
+.sb-tile-7 img {
+  object-position: center 74%;
+}
+
+.sb-tile-8 img {
+  object-position: center 62%;
+}
+
 .sb-tile:hover img {
   transform: scale(1.06);
   filter: brightness(0.75);
@@ -190,6 +207,9 @@
 
 /* Complete Borderless Photography Contact Sheet Below Bento */
 .sb-archive {
+  position: relative;
+  z-index: 2;
+  background: #070404;
   padding-top: clamp(48px, 6vw, 76px);
   padding-bottom: clamp(68px, 8vw, 108px);
 }
@@ -351,15 +371,76 @@
   border-radius: 18px;
   overflow: hidden;
   background: #050202;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.sb-lightbox-stage:active {
+  cursor: grabbing;
+}
+
+.sb-lightbox-track {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+  width: max-content;
+  will-change: transform;
+  perspective: 1100px;
+}
+
+.sb-lightbox-slide {
+  flex: 0 0 auto;
+  width: auto;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px 0;
+  cursor: pointer;
 }
 
-.sb-lightbox-stage img {
-  max-width: 100%;
-  max-height: 100%;
+.sb-lightbox-slide.is-current {
+  cursor: grab;
+}
+
+.sb-lightbox-slide img {
+  height: 100%;
+  width: auto;
+  max-width: min(74vw, 700px);
   object-fit: contain;
+  border-radius: 14px;
+  pointer-events: none;
+  transform: scale(0.82);
+  opacity: 0.24;
+  filter: blur(2px) brightness(0.65);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.72);
+  transition:
+    transform 0.55s var(--ease-out),
+    opacity 0.45s ease,
+    filter 0.45s ease,
+    box-shadow 0.45s ease;
+}
+
+.sb-lightbox-slide.is-adjacent img {
+  transform: scale(0.87);
+  opacity: 0.46;
+  filter: blur(1px) brightness(0.75);
+}
+
+.sb-lightbox-slide.is-adjacent:hover img {
+  opacity: 0.75;
+  filter: blur(0px) brightness(0.9);
+}
+
+.sb-lightbox-slide.is-current img {
+  transform: scale(1);
+  opacity: 1;
+  filter: blur(0px) brightness(1);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(244, 237, 232, 0.16);
 }
 
 .sb-arrow {
@@ -412,9 +493,21 @@
   flex-wrap: nowrap;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 66, 26, 0.5) transparent;
+  padding: 2px 2px 6px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 18px,
+    #000 calc(100% - 18px),
+    transparent 100%
+  );
+}
+
+.sb-lightbox-thumbs::-webkit-scrollbar {
+  display: none;
 }
 
 .sb-lightbox-thumbs button {
@@ -495,7 +588,7 @@
   .sb-bento-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: none;
-    grid-auto-rows: 170px;
+    grid-auto-rows: auto;
     max-height: none;
     gap: 10px;
   }
@@ -510,13 +603,14 @@
   .sb-tile-8 {
     grid-column: auto;
     grid-row: auto;
+    aspect-ratio: 1 / 1.05;
     border-radius: 14px;
   }
 
-  /* Keep center centerpiece hero spanning 2 columns on mobile for strong editorial rhythm */
+  /* Keep centerpiece hero spanning 2 columns cleanly with zero row overlap */
   .sb-tile-3 {
     grid-column: span 2;
-    min-height: 220px;
+    aspect-ratio: 16 / 10;
   }
 
   .sb-archive {

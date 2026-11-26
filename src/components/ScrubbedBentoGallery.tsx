@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import gsap from 'gsap';
-import { Flip } from 'gsap/Flip';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { BRAND, GALLERY_PROJECTS } from '../data/portfolio';
 import type { GalleryProject } from '../types/portfolio';
 import KineticHeading from './KineticHeading';
 import './ScrubbedBentoGallery.css';
 
-gsap.registerPlugin(Flip, ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 interface FlatPhotoFrame {
   key: string;
@@ -27,12 +27,22 @@ const pad2 = (n: number) => String(n).padStart(2, '0');
  * 2) Clean borderless Collection Contact Sheet below lets visitors browse all 95 photos
  *    by shoot or all at once, opening directly into the full-bleed lightbox filmstrip.
  */
-const ScrubbedBentoGallery = () => {
+interface ScrubbedBentoGalleryProps {
+  ready?: boolean;
+}
+
+const ScrubbedBentoGallery = ({ ready = true }: ScrubbedBentoGalleryProps) => {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
   const archiveGridRef = useRef<HTMLDivElement | null>(null);
   const thumbsRef = useRef<HTMLDivElement | null>(null);
-  const touchStartXRef = useRef<number | null>(null);
+  const lbStageRef = useRef<HTMLDivElement | null>(null);
+  const lbTrackRef = useRef<HTMLDivElement | null>(null);
+  const dragStartXRef = useRef<number | null>(null);
+  const dragBaseXRef = useRef<number>(0);
+  const dragOffsetPxRef = useRef<number>(0);
+  const lastWheelMsRef = useRef<number>(0);
+  const lbOpenInitRef = useRef<boolean>(false);
 
   const [activeAlbumId, setActiveAlbumId] = useState<string>('all');
   const [showAllFrames, setShowAllFrames] = useState<boolean>(false);
@@ -168,8 +178,9 @@ const ScrubbedBentoGallery = () => {
     });
   }, [activeAlbumId, photoShoots, showAllFrames]);
 
-  // GSAP Scrubbed Bento ScrollTrigger + Flip (matchMedia: pinned scrub on desktop, smooth scroll reveal on mobile)
+  // GSAP Scrubbed Bento ScrollTrigger (runs ONLY after ScrollSmoother is ready so pinType & pinSpacing are exact!)
   useEffect(() => {
+    if (!ready) return;
     const wrapEl = wrapRef.current;
     const gridEl = gridRef.current;
     if (!wrapEl || !gridEl) return;
@@ -180,52 +191,75 @@ const ScrubbedBentoGallery = () => {
     const mm = gsap.matchMedia();
 
     mm.add('(min-width: 860px)', () => {
-      const tiles = gridEl.querySelectorAll<HTMLElement>('.sb-tile');
+      const outerTiles = gridEl.querySelectorAll<HTMLElement>('.sb-tile:not(.sb-tile-3)');
+      const tileImgs = gridEl.querySelectorAll<HTMLImageElement>('.sb-tile img');
 
-      gridEl.classList.remove('is-expanded');
-      const finalState = Flip.getState(tiles);
-
-      gridEl.classList.add('is-expanded');
-
-      const flipTween = Flip.to(finalState, {
-        scale: true,
-        ease: 'none',
-        absolute: false,
-        simple: true,
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: wrapEl,
+          start: 'top top',
+          end: '+=135%',
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.85,
+          anticipatePin: 1,
+        },
       });
 
-      ScrollTrigger.create({
-        trigger: wrapEl,
-        start: 'top top',
-        end: '+=155%',
-        pin: true,
-        scrub: 0.9,
-        animation: flipTween,
-        invalidateOnRefresh: true,
-      });
+      tl.fromTo(
+        gridEl,
+        { scale: 2.15, transformOrigin: '50% 50%' },
+        { scale: 1, ease: 'none', duration: 1 },
+        0
+      )
+        .fromTo(outerTiles, { opacity: 0.18 }, { opacity: 1, ease: 'none', duration: 0.75 }, 0.15)
+        .fromTo(tileImgs, { scale: 1.18 }, { scale: 1, ease: 'none', duration: 1 }, 0);
     });
 
     mm.add('(max-width: 859px)', () => {
-      gridEl.classList.remove('is-expanded');
       const tiles = gridEl.querySelectorAll<HTMLElement>('.sb-tile');
-      gsap.from(tiles, {
-        y: 26,
-        opacity: 0,
-        scale: 0.96,
-        duration: 0.65,
-        stagger: 0.06,
-        ease: 'power3.out',
-        clearProps: 'transform,opacity',
-        scrollTrigger: {
-          trigger: gridEl,
-          start: 'top 86%',
-          once: true,
+      const heroTileImg = gridEl.querySelector<HTMLImageElement>('.sb-tile-3 img');
+
+      // Smooth GPU staggered mobile bento reveal via ScrollTrigger.batch
+      gsap.set(tiles, { y: 32, opacity: 0, scale: 0.94 });
+      ScrollTrigger.batch(tiles, {
+        start: 'top 90%',
+        once: true,
+        onEnter: (batch) => {
+          gsap.to(batch, {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.65,
+            stagger: 0.08,
+            ease: 'power3.out',
+            clearProps: 'transform,opacity',
+          });
         },
       });
+
+      // Subtle scrubbed zoom parallax on mobile centerpiece tile
+      if (heroTileImg) {
+        gsap.fromTo(
+          heroTileImg,
+          { scale: 1.16 },
+          {
+            scale: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: '.sb-tile-3',
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.6,
+            },
+          }
+        );
+      }
     });
 
+    ScrollTrigger.refresh();
     return () => mm.revert();
-  }, []);
+  }, [ready]);
 
   // Animate contact-sheet frames on album change & refresh ScrollTrigger for downstream pins
   useEffect(() => {
@@ -255,32 +289,152 @@ const ScrubbedBentoGallery = () => {
     return () => window.cancelAnimationFrame(rafId);
   }, [activeAlbumId, showAllFrames]);
 
-  // Keep active thumbnail centered inside the horizontal lightbox filmstrip
+  // Lock background ScrollSmoother & body scroll while lightbox is open
   useEffect(() => {
-    if (!activeShoot || !thumbsRef.current) return;
-    const activeBtn = thumbsRef.current.children[slideIdx] as HTMLElement | undefined;
-    activeBtn?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  }, [activeShoot, slideIdx]);
+    if (!activeShoot) {
+      lbOpenInitRef.current = false;
+      return;
+    }
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const smoother = ScrollSmoother.get();
+    smoother?.paused(true);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      smoother?.paused(false);
+    };
+  }, [activeShoot]);
+
+  const computeCenterX = useCallback((idx: number) => {
+    const stage = lbStageRef.current;
+    const track = lbTrackRef.current;
+    if (!stage || !track) return 0;
+    const target = track.children[idx] as HTMLElement | undefined;
+    if (!target) return 0;
+    return -(target.offsetLeft + target.offsetWidth / 2 - stage.clientWidth / 2);
+  }, []);
+
+  // Smooth GSAP horizontal side-scroll glide centering active slide with peeking neighbors
+  useEffect(() => {
+    if (!activeShoot || !lbTrackRef.current || !lbStageRef.current) return;
+    const track = lbTrackRef.current;
+
+    const align = (instant: boolean) => {
+      const targetX = computeCenterX(slideIdx);
+      dragBaseXRef.current = targetX;
+      if (instant) {
+        gsap.set(track, { x: targetX });
+      } else {
+        gsap.to(track, {
+          x: targetX,
+          duration: 0.65,
+          ease: 'power3.out',
+          overwrite: 'auto',
+        });
+      }
+    };
+
+    if (!lbOpenInitRef.current) {
+      const raf = window.requestAnimationFrame(() => {
+        align(true);
+        lbOpenInitRef.current = true;
+      });
+      return () => window.cancelAnimationFrame(raf);
+    }
+
+    align(false);
+
+    const onResize = () => align(true);
+    window.addEventListener('resize', onResize);
+
+    if (thumbsRef.current) {
+      const activeBtn = thumbsRef.current.children[slideIdx] as HTMLElement | undefined;
+      activeBtn?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    return () => window.removeEventListener('resize', onResize);
+  }, [activeShoot, slideIdx, computeCenterX]);
 
   // Keyboard navigation inside lightbox
   useEffect(() => {
     if (!activeShoot) return;
-    const slides = activeShoot.galleryImages ?? [activeShoot.image];
+    const shootSlides = activeShoot.galleryImages ?? [activeShoot.image];
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setActiveShoot(null);
-      if (e.key === 'ArrowRight') setSlideIdx((i) => (i + 1) % slides.length);
-      if (e.key === 'ArrowLeft') setSlideIdx((i) => (i - 1 + slides.length) % slides.length);
+      if (e.key === 'ArrowRight') setSlideIdx((i) => (i + 1) % shootSlides.length);
+      if (e.key === 'ArrowLeft') setSlideIdx((i) => (i - 1 + shootSlides.length) % shootSlides.length);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [activeShoot]);
 
   const openShoot = (shoot: GalleryProject, startIdx = 0) => {
+    lbOpenInitRef.current = false;
     setSlideIdx(startIdx);
     setActiveShoot(shoot);
   };
 
-  const slides = activeShoot ? activeShoot.galleryImages ?? [activeShoot.image] : [];
+  const slides = useMemo(
+    () => (activeShoot ? activeShoot.galleryImages ?? [activeShoot.image] : []),
+    [activeShoot]
+  );
+
+  const stepSlide = useCallback(
+    (dir: 1 | -1) => {
+      if (slides.length < 2) return;
+      setSlideIdx((i) => (i + dir + slides.length) % slides.length);
+    },
+    [slides.length]
+  );
+
+  const handleStageWheel = useCallback(
+    (e: React.WheelEvent<HTMLDivElement>) => {
+      if (slides.length < 2) return;
+      e.stopPropagation();
+      const now = performance.now();
+      if (now - lastWheelMsRef.current < 230) return;
+      const primaryDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (Math.abs(primaryDelta) < 8) return;
+      lastWheelMsRef.current = now;
+      stepSlide(primaryDelta > 0 ? 1 : -1);
+    },
+    [slides.length, stepSlide]
+  );
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (slides.length < 2) return;
+    if ((e.target as HTMLElement).closest('button.sb-arrow')) return;
+    dragStartXRef.current = e.clientX;
+    dragOffsetPxRef.current = 0;
+    dragBaseXRef.current = computeCenterX(slideIdx);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragStartXRef.current === null || !lbTrackRef.current) return;
+    const dx = e.clientX - dragStartXRef.current;
+    dragOffsetPxRef.current = dx;
+    gsap.set(lbTrackRef.current, { x: dragBaseXRef.current + dx });
+  };
+
+  const handlePointerUp = () => {
+    if (dragStartXRef.current === null) return;
+    const dx = dragOffsetPxRef.current;
+    dragStartXRef.current = null;
+    dragOffsetPxRef.current = 0;
+
+    if (Math.abs(dx) > 48) {
+      stepSlide(dx < 0 ? 1 : -1);
+    } else if (lbTrackRef.current) {
+      gsap.to(lbTrackRef.current, {
+        x: dragBaseXRef.current,
+        duration: 0.45,
+        ease: 'power3.out',
+        overwrite: 'auto',
+      });
+    }
+  };
   const activeShootObj = photoShoots.find((s) => s.id === activeAlbumId);
 
   return (
@@ -324,27 +478,29 @@ const ScrubbedBentoGallery = () => {
         </div>
       </div>
 
-      {/* Pinned Full-Viewport Scrubbed Bento Stage */}
-      <div ref={wrapRef} className="sb-pin-wrap">
-        <div ref={gridRef} className="sb-bento-grid">
-          {bentoTiles.map((tile, idx) => (
-            <button
-              key={tile.key}
-              type="button"
-              className={`sb-tile sb-tile-${idx + 1}`}
-              onClick={() => openShoot(tile.shoot, tile.initialSlide)}
-              aria-label={`Open ${tile.label} photography collection`}
-            >
-              <img src={tile.image} alt={tile.label} loading="lazy" />
-              <div className="sb-tile-hover">
-                <span className="sb-tile-sub">{tile.sub}</span>
-                <strong>{tile.label}</strong>
-                <span className="sb-tile-cta">
-                  Open {tile.shoot.galleryImages?.length ?? 1} Shots ↗
-                </span>
-              </div>
-            </button>
-          ))}
+      {/* Pinned Full-Viewport Scrubbed Bento Stage (isolated pin outer wrapper) */}
+      <div className="sb-pin-outer">
+        <div ref={wrapRef} className="sb-pin-wrap">
+          <div ref={gridRef} className="sb-bento-grid">
+            {bentoTiles.map((tile, idx) => (
+              <button
+                key={tile.key}
+                type="button"
+                className={`sb-tile sb-tile-${idx + 1}`}
+                onClick={() => openShoot(tile.shoot, tile.initialSlide)}
+                aria-label={`Open ${tile.label} photography collection`}
+              >
+                <img src={tile.image} alt={tile.label} loading="lazy" />
+                <div className="sb-tile-hover">
+                  <span className="sb-tile-sub">{tile.sub}</span>
+                  <strong>{tile.label}</strong>
+                  <span className="sb-tile-cta">
+                    Open {tile.shoot.galleryImages?.length ?? 1} Shots ↗
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -447,6 +603,7 @@ const ScrubbedBentoGallery = () => {
             aria-modal="true"
             aria-label={activeShoot.title}
             onClick={() => setActiveShoot(null)}
+            onWheel={handleStageWheel}
           >
             <div className="sb-lightbox glass-panel" onClick={(e) => e.stopPropagation()}>
               <button
@@ -459,35 +616,45 @@ const ScrubbedBentoGallery = () => {
               </button>
 
               <div
+                ref={lbStageRef}
                 className="sb-lightbox-stage"
-                onTouchStart={(e) => {
-                  touchStartXRef.current = e.touches[0]?.clientX ?? null;
-                }}
-                onTouchEnd={(e) => {
-                  const startX = touchStartXRef.current;
-                  const endX = e.changedTouches[0]?.clientX;
-                  touchStartXRef.current = null;
-                  if (startX === null || endX === undefined || slides.length < 2) return;
-                  const delta = endX - startX;
-                  if (Math.abs(delta) > 42) {
-                    setSlideIdx((i) =>
-                      delta < 0
-                        ? (i + 1) % slides.length
-                        : (i - 1 + slides.length) % slides.length
-                    );
-                  }
-                }}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
               >
-                <img
-                  src={slides[slideIdx] ?? activeShoot.image}
-                  alt={`${activeShoot.title} - frame ${slideIdx + 1}`}
-                />
+                <div ref={lbTrackRef} className="sb-lightbox-track">
+                  {slides.map((src, i) => {
+                    const isCurrent = i === slideIdx;
+                    const isAdjacent = Math.abs(i - slideIdx) === 1;
+                    return (
+                      <div
+                        key={src}
+                        className={`sb-lightbox-slide${isCurrent ? ' is-current' : ''}${
+                          isAdjacent ? ' is-adjacent' : ''
+                        }`}
+                        onClick={() => {
+                          if (!isCurrent && Math.abs(dragOffsetPxRef.current) < 8) {
+                            setSlideIdx(i);
+                          }
+                        }}
+                      >
+                        <img
+                          src={src}
+                          alt={`${activeShoot.title} - frame ${i + 1}`}
+                          draggable={false}
+                          decoding="async"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
                 {slides.length > 1 && (
                   <>
                     <button
                       type="button"
                       className="sb-arrow sb-prev"
-                      onClick={() => setSlideIdx((i) => (i - 1 + slides.length) % slides.length)}
+                      onClick={() => stepSlide(-1)}
                       aria-label="Previous photo"
                     >
                       ‹
@@ -495,7 +662,7 @@ const ScrubbedBentoGallery = () => {
                     <button
                       type="button"
                       className="sb-arrow sb-next"
-                      onClick={() => setSlideIdx((i) => (i + 1) % slides.length)}
+                      onClick={() => stepSlide(1)}
                       aria-label="Next photo"
                     >
                       ›
@@ -507,7 +674,8 @@ const ScrubbedBentoGallery = () => {
               <div className="sb-lightbox-bar">
                 <div className="sb-lightbox-meta">
                   <span className="micro-label">
-                    {activeShoot.client} · {pad2(slideIdx + 1)} / {pad2(slides.length)}
+                    {activeShoot.client} · {pad2(slideIdx + 1)} / {pad2(slides.length)} · SCROLL OR
+                    DRAG
                   </span>
                   <h3 className="reina-display">{activeShoot.title.toLowerCase()}</h3>
                 </div>
@@ -527,8 +695,18 @@ const ScrubbedBentoGallery = () => {
                 </div>
               </div>
 
-              {/* Scrollable Filmstrip for 5 to 22+ Photos */}
-              <div ref={thumbsRef} className="sb-lightbox-thumbs" aria-label="Shoot filmstrip">
+              {/* Scrollable Filmstrip for 5 to 22+ Photos (wheel translates vertically to horizontal) */}
+              <div
+                ref={thumbsRef}
+                className="sb-lightbox-thumbs"
+                aria-label="Shoot filmstrip"
+                onWheel={(e) => {
+                  if (!thumbsRef.current) return;
+                  if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                    thumbsRef.current.scrollLeft += e.deltaY * 1.4;
+                  }
+                }}
+              >
                 {slides.map((src, i) => (
                   <button
                     key={src}

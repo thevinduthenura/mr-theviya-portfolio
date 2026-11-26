@@ -92,6 +92,8 @@ const Footer = ({ onNavigate, onJumpToCategory }: FooterProps) => {
               src={BRAND.tagLogo}
               alt="Mr. Theviya"
               className="ed-footer-logo"
+              loading="lazy"
+              decoding="async"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}

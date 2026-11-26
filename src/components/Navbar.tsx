@@ -41,6 +41,7 @@ const Navbar = ({ activeSection, onNavigate }: NavbarProps) => {
               src={BRAND.tagLogo}
               alt="Mr. Theviya"
               className="ed-brand-img"
+              decoding="async"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}

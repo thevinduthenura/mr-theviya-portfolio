@@ -2,12 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { BRAND, POSTER_DECK_WORKS } from '../data/portfolio';
 import type { PosterWork } from '../types/portfolio';
 import KineticHeading from './KineticHeading';
 import './PosterFanDeck.css';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 const CATEGORIES = ['All', 'Campaign', 'Merch & Apparel', 'Editorial'] as const;
 
@@ -15,11 +16,46 @@ const PosterFanDeck = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const deckStageRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const touchStartXRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(2);
   const [activeCategory, setActiveCategory] = useState<(typeof CATEGORIES)[number]>('All');
   const [lightboxWork, setLightboxWork] = useState<PosterWork | null>(null);
+  const lastLbWheelRef = useRef<number>(0);
 
   const total = POSTER_DECK_WORKS.length;
+
+  const stepLightboxWork = useCallback(
+    (dir: 1 | -1) => {
+      setLightboxWork((curr) => {
+        if (!curr) return curr;
+        const currIdx = POSTER_DECK_WORKS.findIndex((w) => w.id === curr.id);
+        const nextIdx = (currIdx + dir + total) % total;
+        setActiveIndex(nextIdx);
+        return POSTER_DECK_WORKS[nextIdx];
+      });
+    },
+    [total]
+  );
+
+  useEffect(() => {
+    if (!lightboxWork) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const smoother = ScrollSmoother.get();
+    smoother?.paused(true);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxWork(null);
+      if (e.key === 'ArrowRight') stepLightboxWork(1);
+      if (e.key === 'ArrowLeft') stepLightboxWork(-1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      smoother?.paused(false);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [lightboxWork, stepLightboxWork]);
 
   const getCircularOffset = useCallback(
     (index: number) => {
@@ -192,8 +228,26 @@ const PosterFanDeck = () => {
           </div>
         </div>
 
-        {/* 3D Fanned Poster Stage */}
-        <div ref={deckStageRef} className="fan-stage" data-cursor="VIEW">
+        {/* 3D Fanned Poster Stage (touch-swipeable on mobile) */}
+        <div
+          ref={deckStageRef}
+          className="fan-stage"
+          data-cursor="VIEW"
+          onTouchStart={(e) => {
+            touchStartXRef.current = e.touches[0]?.clientX ?? null;
+          }}
+          onTouchEnd={(e) => {
+            const startX = touchStartXRef.current;
+            const endX = e.changedTouches[0]?.clientX;
+            touchStartXRef.current = null;
+            if (startX === null || endX === undefined) return;
+            const dx = endX - startX;
+            if (Math.abs(dx) > 40) {
+              if (dx < 0) handleNext();
+              else handlePrev();
+            }
+          }}
+        >
           <div className="fan-ambient-glow" aria-hidden="true" />
           {POSTER_DECK_WORKS.map((work, idx) => {
             const isCenter = idx === activeIndex;
@@ -318,6 +372,15 @@ const PosterFanDeck = () => {
             aria-modal="true"
             aria-label={lightboxWork.title}
             onClick={() => setLightboxWork(null)}
+            onWheel={(e) => {
+              e.stopPropagation();
+              const now = performance.now();
+              if (now - lastLbWheelRef.current < 240) return;
+              const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+              if (Math.abs(delta) < 8) return;
+              lastLbWheelRef.current = now;
+              stepLightboxWork(delta > 0 ? 1 : -1);
+            }}
           >
             <div
               className="fan-lightbox-modal glass-panel"

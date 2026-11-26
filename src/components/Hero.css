@@ -85,61 +85,75 @@
   z-index: 2;
 }
 
+/* Frameless Real Upper-Bust Cutout Stage */
 .hero-portrait-arch {
   position: relative;
-  width: clamp(300px, 34vw, 455px);
-  height: clamp(460px, 74vh, 700px);
-  border-radius: 240px 240px 0 0;
-  overflow: hidden;
+  width: clamp(340px, 42vw, 540px);
+  height: clamp(460px, 72vh, 650px);
+  overflow: visible;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+}
+
+.hero-portrait-arch::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 92%;
+  height: 82%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
   background: radial-gradient(
-    ellipse at 50% 30%,
-    rgba(255, 68, 26, 0.34) 0%,
-    rgba(122, 16, 8, 0.28) 46%,
-    rgba(10, 6, 6, 0.22) 100%
+    circle,
+    rgba(255, 68, 26, 0.3) 0%,
+    rgba(164, 24, 10, 0.2) 46%,
+    transparent 74%
   );
-  border-top: 1px solid rgba(255, 118, 72, 0.32);
-  box-shadow:
-    0 0 95px rgba(255, 58, 22, 0.24),
-    inset 0 24px 60px rgba(255, 84, 34, 0.18);
-  will-change: transform, filter;
+  filter: blur(44px);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .hero-portrait-rim {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 75% 28%, rgba(255, 92, 34, 0.34), transparent 46%),
-    radial-gradient(circle at 22% 55%, rgba(160, 18, 10, 0.38), transparent 52%);
-  mix-blend-mode: screen;
-  z-index: 2;
+  display: none;
 }
 
+/* Real Untouched Upper-Bust Cutout - Crisp Editorial Black & White */
 .hero-portrait-img {
   position: relative;
   z-index: 1;
-  width: 100%;
-  height: 92%;
-  object-fit: cover;
-  object-position: center top;
-  filter: contrast(1.08) saturate(0.92) brightness(0.92);
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: grayscale(100%) contrast(1.18) brightness(0.92) drop-shadow(0 18px 40px rgba(0, 0, 0, 0.7));
+  mask-image: linear-gradient(180deg, #000 0%, #000 68%, rgba(0, 0, 0, 0.45) 86%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 68%,
+    rgba(0, 0, 0, 0.45) 86%,
+    transparent 100%
+  );
 }
 
 .hero-portrait-scrim {
   position: absolute;
-  inset: 0;
+  left: -25%;
+  right: -25%;
+  bottom: 0;
+  height: 44%;
   z-index: 3;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(16, 6, 6, 0.15) 0%,
-      rgba(14, 5, 5, 0.08) 42%,
-      rgba(10, 5, 5, 0.72) 82%,
-      #0a0606 100%
-    ),
-    radial-gradient(circle at 50% 35%, transparent 45%, rgba(12, 4, 4, 0.6) 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(10, 5, 5, 0.55) 58%,
+    #090505 100%
+  );
+  pointer-events: none;
 }
 
 .hero-content {
@@ -500,12 +514,16 @@
   .hero-portrait-stage {
     position: relative;
     order: -1;
-    margin: 0 auto 18px;
+    margin: 0 auto 10px;
   }
 
   .hero-portrait-arch {
-    width: min(290px, 78vw);
-    height: 315px;
+    width: min(310px, 86vw);
+    height: 310px;
+  }
+
+  .hero-portrait-scrim {
+    display: none;
   }
 
   .hero-content {

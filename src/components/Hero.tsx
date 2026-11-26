@@ -56,75 +56,74 @@ const Hero = ({ onNavigate, onSelectServiceTag }: HeroProps) => {
     return () => window.clearInterval(timer);
   }, []);
 
-  // GSAP Entrance Orchestration + ScrollTrigger Depth Parallax
+  // GSAP Entrance Orchestration + Clean ScrollTrigger Parallax (no portrait blur/offset lock!)
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
       tl.fromTo(
         portraitRef.current,
-        { y: 48, scale: 0.92, opacity: 0, filter: 'blur(14px)' },
-        { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.15 }
+        { y: 26, scale: 0.96, opacity: 0 },
+        { y: 0, scale: 1, opacity: 1, duration: 0.95, clearProps: 'transform,opacity' }
       )
         .fromTo(
           '.hero-anim-left',
-          { x: -34, opacity: 0, filter: 'blur(8px)' },
-          { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.85, stagger: 0.1 },
-          '-=0.8'
+          { x: -30, opacity: 0 },
+          { x: 0, opacity: 1, duration: 0.8, stagger: 0.1, clearProps: 'transform,opacity' },
+          '-=0.7'
         )
         .fromTo(
           '.hero-anim-right',
-          { x: 34, opacity: 0, filter: 'blur(8px)' },
-          { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.85, stagger: 0.08 },
-          '-=0.85'
+          { x: 30, opacity: 0 },
+          { x: 0, opacity: 1, duration: 0.8, stagger: 0.08, clearProps: 'transform,opacity' },
+          '-=0.75'
         )
         .fromTo(
           '.hero-bento-card',
-          { y: 28, rotateX: -14, opacity: 0 },
-          { y: 0, rotateX: 0, opacity: 1, duration: 0.8, stagger: 0.12 },
-          '-=0.6'
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.75, stagger: 0.12, clearProps: 'transform,opacity' },
+          '-=0.55'
         );
 
-      // Scroll-driven depth parallax on hero layers
+      // Subtle scroll-driven parallax ONLY on background watermark & crimson ribbon
+      // Portrait stays 100% crisp, centered, and un-blurred whenever returning to Home!
       if (watermarkRef.current) {
-        gsap.to(watermarkRef.current, {
-          y: -90,
-          scale: 1.06,
-          opacity: 0.015,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.2,
-          },
-        });
-      }
-
-      if (portraitRef.current) {
-        gsap.to(portraitRef.current, {
-          y: 55,
-          scale: 1.06,
-          filter: 'blur(3px)',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1,
-          },
-        });
+        gsap.fromTo(
+          watermarkRef.current,
+          { y: 0, scale: 1, opacity: 1 },
+          {
+            y: -70,
+            scale: 1.05,
+            opacity: 0.4,
+            ease: 'none',
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 100px',
+              end: 'bottom top',
+              scrub: 0.8,
+            },
+          }
+        );
       }
 
       if (ribbonRef.current) {
-        gsap.to(ribbonRef.current, {
-          xPercent: 10,
-          rotation: -3,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.5,
-          },
-        });
+        gsap.fromTo(
+          ribbonRef.current,
+          { xPercent: 0, rotation: -7 },
+          {
+            xPercent: 10,
+            rotation: -3,
+            ease: 'none',
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 100px',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          }
+        );
       }
     }, sectionRef);
 
@@ -153,6 +152,8 @@ const Hero = ({ onNavigate, onSelectServiceTag }: HeroProps) => {
             src={BRAND.profilePhoto}
             alt="Thevindu Gunathilaka - Mr. Theviya"
             className="hero-portrait-img"
+            fetchPriority="high"
+            decoding="async"
           />
           <div className="hero-portrait-scrim" />
         </div>

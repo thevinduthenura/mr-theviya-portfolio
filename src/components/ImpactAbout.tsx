@@ -124,7 +124,12 @@ const ImpactAbout = ({ onNavigate }: ImpactAboutProps) => {
             <span className="imp-drift-left imp-block-line">
               INTO VISUAL
               <span className="inline-pill-media">
-                <img src="/images/projects/videography/hyper-media-reel.jpg" alt="" />
+                <img
+                  src="/images/projects/videography/hyper-media-reel.jpg"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
               </span>
               STATEMENTS
             </span>

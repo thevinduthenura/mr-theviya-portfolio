@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
@@ -45,6 +45,7 @@ const App = () => {
   const [activeSection, setActiveSection] = useState<SectionId>('home');
   const [activeDesignTab, setActiveDesignTab] = useState<DesignTabId>('projects');
   const [preselectedService, setPreselectedService] = useState<string>('');
+  const [smootherReady, setSmootherReady] = useState<boolean>(false);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const smootherRef = useRef<ScrollSmoother | null>(null);
 
@@ -101,8 +102,8 @@ const App = () => {
     [handleJumpToCategory, scrollToSection]
   );
 
-  // Initialize GSAP ScrollSmoother (desktop only) + Scroll Progress + Velocity Motion Blur
-  useEffect(() => {
+  // Initialize GSAP ScrollSmoother FIRST before any child pinned ScrollTriggers mount
+  useLayoutEffect(() => {
     ScrollTrigger.config({ ignoreMobileResize: true });
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -120,11 +121,18 @@ const App = () => {
       smootherRef.current = ScrollSmoother.create({
         wrapper: '#smooth-wrapper',
         content: '#smooth-content',
-        smooth: 1.35,
+        smooth: 1.25,
         effects: true,
         smoothTouch: false,
       });
     }
+
+    const readyRaf = window.requestAnimationFrame(() => {
+      setSmootherReady(true);
+    });
+
+    const onWindowLoad = () => ScrollTrigger.refresh();
+    window.addEventListener('load', onWindowLoad);
 
     const progressTrigger = ScrollTrigger.create({
       start: 0,
@@ -158,16 +166,20 @@ const App = () => {
     });
 
     return () => {
+      window.cancelAnimationFrame(readyRaf);
+      window.removeEventListener('load', onWindowLoad);
       progressTrigger.kill();
       smootherRef.current?.kill();
       smootherRef.current = null;
+      setSmootherReady(false);
       document.documentElement.style.setProperty('--scroll-skew', '0deg');
       document.documentElement.style.setProperty('--scroll-blur', '0px');
     };
   }, []);
 
-  // Active section scroll-spy via ScrollTrigger
+  // Active section scroll-spy via ScrollTrigger (after smoother & pinned galleries ready)
   useEffect(() => {
+    if (!smootherReady) return;
     const triggers = SECTION_IDS.map((id) => {
       const el = document.getElementById(id);
       if (!el) return null;
@@ -182,13 +194,13 @@ const App = () => {
 
     const refreshTimer = window.setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 300);
+    }, 350);
 
     return () => {
       window.clearTimeout(refreshTimer);
       triggers.forEach((t) => t?.kill());
     };
-  }, []);
+  }, [smootherReady]);
 
   return (
     <>
@@ -217,8 +229,8 @@ const App = () => {
               <main>
                 <Hero onNavigate={scrollToSection} onSelectServiceTag={handleSelectHeroTag} />
                 <StatementShowcase />
-                <ScrubbedBentoGallery />
-                <HorizontalScrollGallery />
+                <ScrubbedBentoGallery ready={smootherReady} />
+                <HorizontalScrollGallery ready={smootherReady} />
                 <ProjectGallery
                   activeTab={activeDesignTab}
                   onChangeTab={setActiveDesignTab}

@@ -278,6 +278,10 @@ button {
   border-top: 1px solid var(--border-hairline);
 }
 
+section[id] {
+  scroll-margin-top: 76px;
+}
+
 .editorial-asterisk {
   display: inline-flex;
   align-items: center;

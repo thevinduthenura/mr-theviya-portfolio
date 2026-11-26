@@ -51,8 +51,8 @@ export const BRAND = {
   linktreePersonal: 'https://linktr.ee/thevindu.thenura',
   hatchProfile: 'https://hatch.team/people/thevindu-gunathilaka',
   pinterest: 'https://www.pinterest.com/mrtheviya',
-  tagLogo: '/images/clients/Mr%20Theviya%20Tag%402x%201.svg',
-  profilePhoto: '/images/profile.png',
+  tagLogo: '/images/clients/Mr%20Theviya%20Tag@2x%201.svg',
+  profilePhoto: '/images/profile.webp',
 } as const;
 
 export const NAV_ITEMS: NavItem[] = [

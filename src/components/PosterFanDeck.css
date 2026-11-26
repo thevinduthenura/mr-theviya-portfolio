@@ -438,13 +438,23 @@
   }
 }
 
+@media (max-width: 720px) {
+  /* Hide side-card text labels on compact screens so only center card copy stays clean */
+  .fan-card:not(.is-center) .fan-card-top,
+  .fan-card:not(.is-center) .fan-card-bottom {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
 @media (max-width: 560px) {
   .fan-stage {
     min-height: 360px;
+    touch-action: pan-y;
   }
 
   .fan-card {
-    width: min(230px, 66vw);
+    width: min(236px, 66vw);
   }
 
   .fan-active-summary {

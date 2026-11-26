@@ -147,7 +147,12 @@ const StatementShowcase = () => {
             <span className="st-scrub-word">BRAND</span>{' '}
             <span className="st-scrub-word">SYSTEMS</span>
             <span ref={pillRef} className="inline-pill-media">
-              <img src="/images/projects/graphic-design/hyper-1.jpg" alt="" />
+              <img
+                src="/images/projects/graphic-design/hyper-1.jpg"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
             </span>
             <span className="st-scrub-word">THAT</span>
             <br />

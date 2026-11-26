@@ -337,15 +337,67 @@
   border-radius: 18px;
   overflow: hidden;
   background: #050202;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.ag-modal-stage:active {
+  cursor: grabbing;
+}
+
+.ag-modal-track {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+  width: max-content;
+  will-change: transform;
+}
+
+.ag-modal-slide {
+  flex: 0 0 auto;
+  width: auto;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px 0;
+  cursor: pointer;
 }
 
-.ag-modal-stage img {
-  max-width: 100%;
-  max-height: 100%;
+.ag-modal-slide.is-current {
+  cursor: grab;
+}
+
+.ag-modal-slide img {
+  height: 100%;
+  width: auto;
+  max-width: min(74vw, 720px);
   object-fit: contain;
+  border-radius: 14px;
+  pointer-events: none;
+  transform: scale(0.84);
+  opacity: 0.28;
+  filter: blur(1.8px) brightness(0.68);
+  transition: transform 0.55s var(--ease-out), opacity 0.45s ease, filter 0.45s ease;
+}
+
+.ag-modal-slide.is-adjacent img {
+  transform: scale(0.88);
+  opacity: 0.48;
+  filter: blur(0.8px) brightness(0.78);
+}
+
+.ag-modal-slide.is-adjacent:hover img {
+  opacity: 0.78;
+  filter: blur(0px) brightness(0.92);
+}
+
+.ag-modal-slide.is-current img {
+  transform: scale(1);
+  opacity: 1;
+  filter: blur(0px) brightness(1);
 }
 
 .ag-modal-arrow {

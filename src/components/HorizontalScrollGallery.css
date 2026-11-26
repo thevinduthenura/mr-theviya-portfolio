@@ -373,6 +373,14 @@
   .hs-panel {
     width: min(80vw, 310px);
     scroll-snap-align: start;
+    transition: transform 0.4s var(--ease-out), opacity 0.35s ease;
+    transform: scale(0.95);
+    opacity: 0.72;
+  }
+
+  .hs-panel.is-focused {
+    transform: scale(1);
+    opacity: 1;
   }
 
   .hs-frame {
