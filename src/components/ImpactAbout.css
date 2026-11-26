@@ -1,0 +1,433 @@
+.impact-section {
+  background:
+    radial-gradient(ellipse 65% 45% at 50% 85%, rgba(168, 24, 10, 0.16), transparent 65%),
+    var(--bg-page);
+  overflow: hidden;
+}
+
+.impact-headline-wrap {
+  max-width: 960px;
+  margin: 0 auto clamp(42px, 5.5vw, 68px);
+}
+
+.impact-heading {
+  font-size: clamp(2rem, 4.9vw, 4.1rem);
+  line-height: 0.99;
+}
+
+.imp-block-line {
+  display: block;
+}
+
+.impact-line-indent {
+  display: inline-block;
+  margin-left: clamp(0px, 9vw, 118px);
+}
+
+.impact-line-right {
+  display: block;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.impact-line-right .reina-serif {
+  color: var(--accent-champagne);
+  font-size: 1.12em;
+}
+
+.imp-drift-left,
+.imp-drift-right {
+  will-change: transform;
+}
+
+/* 3-Card Bento Trio */
+.impact-trio {
+  display: grid;
+  grid-template-columns: 1fr 1.18fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.impact-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.impact-media-card {
+  position: relative;
+  flex: 1;
+  min-height: 270px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--bg-surface);
+  border: 1px solid rgba(244, 237, 232, 0.14);
+  box-shadow: var(--shadow-card);
+}
+
+.impact-media-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.65s var(--ease-out);
+}
+
+.impact-media-card:hover img {
+  transform: scale(1.06);
+}
+
+.impact-media-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 4, 4, 0.15) 0%, rgba(8, 4, 4, 0.72) 100%);
+}
+
+.impact-corner-tag {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  background: rgba(10, 6, 6, 0.68);
+  border: 1px solid rgba(244, 237, 232, 0.18);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--ink-primary);
+}
+
+.impact-manifesto {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+}
+
+.impact-manifesto p {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--ink-body);
+}
+
+/* Signature Center Glowing Crimson Card */
+.impact-feature-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 365px;
+  padding: 22px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 114, 70, 0.42);
+  background:
+    radial-gradient(
+      circle at 72% 34%,
+      rgba(255, 92, 34, 0.92) 0%,
+      rgba(212, 36, 12, 0.85) 38%,
+      rgba(44, 10, 8, 0.96) 82%
+    ),
+    #180706;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.75),
+    0 0 60px rgba(255, 66, 26, 0.24);
+  transition: transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out);
+}
+
+.impact-feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 36px 80px rgba(0, 0, 0, 0.84),
+    0 0 80px rgba(255, 66, 26, 0.4);
+}
+
+.impact-feature-glow {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  top: 10%;
+  right: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 174, 102, 0.72), transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.impact-feature-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.impact-mini-mark {
+  display: grid;
+  grid-template-columns: repeat(2, 5px);
+  gap: 3px;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(12, 5, 5, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+}
+
+.impact-mini-mark i {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 1px;
+  background: #fff4ee;
+}
+
+.impact-feature-tag {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(255, 244, 238, 0.88);
+}
+
+.impact-feature-bottom {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.impact-feature-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2vw, 1.65rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: #fff6f0;
+}
+
+.impact-feature-reina {
+  font-size: 1.2em;
+  color: #fff6f0;
+}
+
+.inline-outline-pill {
+  display: inline-block;
+  width: 36px;
+  height: 16px;
+  margin-left: 8px;
+  vertical-align: middle;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 246, 240, 0.65);
+}
+
+.inline-outline-pill.small {
+  width: 24px;
+}
+
+.impact-feature-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #fff6f0;
+  color: #150706;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: transform 0.3s var(--ease-out);
+}
+
+.impact-feature-card:hover .impact-feature-btn {
+  transform: translateX(3px);
+}
+
+.impact-explore-btn {
+  width: 100%;
+  padding: 15px 22px;
+}
+
+/* Linktree Frosted Glass Hub */
+.linktree-hub {
+  margin-top: clamp(46px, 6vw, 72px);
+  padding-top: clamp(32px, 4vw, 48px);
+  border-top: 1px solid var(--border-hairline);
+}
+
+.linktree-hub-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.linktree-hub-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 2.6vw, 2.15rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--ink-primary);
+  margin-top: 6px;
+}
+
+.linktree-hub-title .reina-serif {
+  color: var(--accent-champagne);
+  font-size: 1.18em;
+}
+
+.linktree-hub-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.linktree-hub-badges .pill-btn {
+  padding: 9px 16px;
+  font-size: 0.66rem;
+}
+
+.linktree-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.hub-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  transition:
+    transform 0.35s var(--ease-out),
+    border-color 0.3s ease,
+    box-shadow 0.35s ease;
+}
+
+.hub-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-accent);
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.65),
+    0 0 28px rgba(255, 66, 26, 0.2);
+}
+
+.hub-card-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 66, 26, 0.12);
+  border: 1px solid rgba(255, 66, 26, 0.3);
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent-bright);
+  flex-shrink: 0;
+}
+
+.hub-card-meta {
+  min-width: 0;
+}
+
+.hub-card-meta strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink-primary);
+}
+
+.hub-card-meta span {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--ink-body);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hub-card-arrow {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--ink-subtle);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.hub-card:hover .hub-card-arrow {
+  color: var(--accent-bright);
+  transform: translate(2px, -2px);
+}
+
+/* Skills Strip */
+.impact-skills {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: clamp(36px, 4.5vw, 54px);
+  padding-top: 24px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.impact-skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.impact-skill-chip {
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-warm);
+  background: rgba(218, 197, 167, 0.05);
+  backdrop-filter: blur(8px);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--accent-champagne);
+}
+
+@media (max-width: 1020px) {
+  .linktree-hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 920px) {
+  .impact-trio {
+    grid-template-columns: 1fr;
+  }
+
+  .impact-feature-card {
+    min-height: 290px;
+  }
+
+  .impact-line-indent {
+    margin-left: 0;
+  }
+
+  .impact-line-right {
+    text-align: left;
+  }
+}
+
+@media (max-width: 560px) {
+  .linktree-hub-grid {
+    grid-template-columns: 1fr;
+  }
+}

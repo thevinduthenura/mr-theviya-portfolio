@@ -1,0 +1,35 @@
+.ambient-pointer-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  overflow: hidden;
+}
+
+/* Ultra-soft, edgeless atmospheric glow - zero circle/ring over the cursor */
+.ambient-pointer-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 520px;
+  height: 520px;
+  margin-left: -260px;
+  margin-top: -260px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  background: radial-gradient(
+    circle,
+    rgba(255, 66, 26, 0.065) 0%,
+    rgba(168, 22, 10, 0.025) 36%,
+    transparent 68%
+  );
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .ambient-pointer-layer {
+    display: none;
+  }
+}

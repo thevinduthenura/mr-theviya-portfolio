@@ -1,0 +1,47 @@
+.kinetic-heading {
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+  user-select: none;
+}
+
+.kh-line {
+  display: block;
+}
+
+.kh-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.kh-char {
+  display: inline-block;
+  will-change: transform, filter, color;
+  transform-origin: center bottom;
+}
+
+.kh-space {
+  display: inline-block;
+  width: 0.24em;
+}
+
+.kh-tone-primary {
+  color: var(--ink-primary);
+}
+
+.kh-tone-muted {
+  color: var(--ink-muted);
+}
+
+.kh-tone-accent {
+  color: var(--accent);
+}
+
+.kh-tone-reina {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: lowercase !important;
+  letter-spacing: -0.01em;
+  color: var(--accent-champagne);
+}
