@@ -1,53 +1,288 @@
-.footer {
-  background: #0f0c0a;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 40px 60px;
+.ed-footer {
+  position: relative;
+  border-top: 1px solid var(--border-hairline);
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(180, 28, 10, 0.22), transparent 70%),
+    #060303;
+  padding: clamp(54px, 6.5vw, 84px) 0 32px;
+  overflow: hidden;
+}
+
+.ed-footer-glow {
+  position: absolute;
+  width: 560px;
+  height: 220px;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(255, 66, 26, 0.22);
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+/* Monumental Signature CTA Card */
+.ed-footer-hero {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 28px;
+  padding: clamp(26px, 4vw, 44px);
+  border-radius: 28px;
+  margin-bottom: clamp(42px, 5vw, 60px);
+}
+
+.ed-footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ed-footer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.ed-footer-mega {
+  font-size: clamp(3.2rem, 8.2vw, 6.8rem);
+  line-height: 0.88;
+}
+
+.ed-footer-sub {
+  margin-top: 10px;
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  color: var(--ink-subtle);
+}
+
+.ed-footer-hero-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 4-Column Directory */
+.ed-footer-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.4fr 0.72fr 0.92fr 1.15fr;
+  gap: 34px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.ed-footer-logo {
+  height: 28px;
+  width: auto;
+  margin-bottom: 14px;
+}
+
+.ed-footer-tagline {
+  max-width: 320px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--ink-body);
+}
+
+.ed-footer-direct {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 16px;
+}
+
+.ed-footer-direct a {
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  color: var(--ink-primary);
+  width: fit-content;
+  border-bottom: 1px solid rgba(255, 66, 26, 0.35);
+  padding-bottom: 2px;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.ed-footer-direct a:hover {
+  color: var(--accent-bright);
+  border-color: var(--accent-bright);
+}
+
+.ed-footer-clock {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 18px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(244, 237, 232, 0.04);
+  border: 1px solid var(--border-hairline);
+}
+
+.ed-footer-clock .micro-label {
+  font-size: 0.58rem;
+}
+
+.ed-footer-clock strong {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent-champagne);
+}
+
+.ed-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ed-footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ed-footer-col li a,
+.ed-footer-cat-btn {
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  color: var(--ink-subtle);
+  transition: color 0.25s ease;
+}
+
+.ed-footer-col li a:hover,
+.ed-footer-cat-btn:hover {
+  color: var(--accent-bright);
+}
+
+.ed-footer-cat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ed-footer-cat-btn span:last-child {
+  font-size: 0.66rem;
+  color: var(--accent-champagne);
+  opacity: 0.72;
+}
+
+.ed-footer-linktrees {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ed-footer-linktrees a {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--accent-champagne);
+  transition: color 0.25s ease;
+}
+
+.ed-footer-linktrees a:hover {
+  color: var(--accent-bright);
+}
+
+.ed-footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 4px;
+}
+
+.ed-social-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 34px;
+  padding: 0 9px;
+  border-radius: 10px;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-glass);
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-subtle);
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.ed-social-chip:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #090404;
+  transform: translateY(-2px);
+}
+
+/* Bottom Architectural Bar */
+.ed-footer-bottom {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 14px;
+  padding-top: 24px;
+  font-size: 0.76rem;
+  color: var(--ink-body);
 }
 
-.footer-logo {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 1.3rem;
-  color: var(--text-primary);
-}
-.footer-logo span { color: var(--accent); }
-
-.footer-copy {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-}
-
-.footer-socials { display: flex; gap: 10px; }
-
-.footer-social {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.08);
+.ed-footer-bottom-right {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  text-decoration: none;
-  transition: all 0.3s;
-}
-.footer-social:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: rgba(232,100,16,0.06);
+  gap: 16px;
 }
 
-@media (max-width: 700px) {
-  .footer {
-    flex-direction: column;
-    text-align: center;
-    padding: 30px 24px;
+.ed-footer-loc {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+}
+
+.ed-back-top {
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-warm);
+  background: rgba(244, 237, 232, 0.05);
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--ink-primary);
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.ed-back-top:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #080404;
+}
+
+@media (max-width: 1020px) {
+  .ed-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .ed-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
   }
 }
