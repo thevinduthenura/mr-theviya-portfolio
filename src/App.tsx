@@ -13,9 +13,12 @@ import Clients from './components/Clients';
 import ImpactAbout from './components/ImpactAbout';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import ProjectsPage from './components/ProjectsPage';
 import type { DesignTabId, GalleryCategoryId, SectionId } from './types/portfolio';
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+type PageRoute = 'home' | 'projects';
 
 const SECTION_IDS: SectionId[] = [
   'home',
@@ -35,15 +38,41 @@ const TAG_TO_CATEGORY: Record<string, GalleryCategoryId> = {
   'WEB DESIGN': 'web-design',
 };
 
+const readRouteFromLocation = (): { route: PageRoute; projectId: string | null } => {
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  const hash = window.location.hash.replace(/^#/, '') || null;
+  if (path === '/projects') {
+    return { route: 'projects', projectId: hash };
+  }
+  return { route: 'home', projectId: null };
+};
+
 const App = () => {
-  const [activeSection, setActiveSection] = useState<SectionId>('home');
+  const initialLoc = readRouteFromLocation();
+  const [route, setRoute] = useState<PageRoute>(initialLoc.route);
+  const [targetProjectId, setTargetProjectId] = useState<string | null>(initialLoc.projectId);
+  const pendingHomeSectionRef = useRef<SectionId | null>(null);
+  const [activeSection, setActiveSection] = useState<SectionId>(
+    initialLoc.route === 'projects' ? 'projects' : 'home'
+  );
   const [activeDesignTab, setActiveDesignTab] = useState<DesignTabId>('projects');
   const [preselectedService, setPreselectedService] = useState<string>('');
   const [smootherReady, setSmootherReady] = useState<boolean>(false);
   const progressRef = useRef<HTMLDivElement | null>(null);
   const smootherRef = useRef<ScrollSmoother | null>(null);
 
-  const scrollToSection = useCallback((id: SectionId) => {
+  const openProjectsPage = useCallback((projectId?: string) => {
+    const nextUrl = projectId ? `/projects#${projectId}` : '/projects';
+    if (window.location.pathname + window.location.hash !== nextUrl) {
+      window.history.pushState({ route: 'projects', projectId: projectId ?? null }, '', nextUrl);
+    }
+    setTargetProjectId(projectId ?? null);
+    setRoute('projects');
+    setActiveSection('projects');
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, []);
+
+  const scrollToHomeSection = useCallback((id: SectionId) => {
     setActiveSection(id);
     const target = document.getElementById(id);
     if (!target) return;
@@ -55,33 +84,74 @@ const App = () => {
     }
   }, []);
 
+  const handleGoHome = useCallback(
+    (section?: SectionId) => {
+      if (route !== 'home') {
+        const nextUrl = section && section !== 'home' ? `/#${section}` : '/';
+        window.history.pushState({ route: 'home' }, '', nextUrl);
+        setTargetProjectId(null);
+        pendingHomeSectionRef.current = section ?? 'home';
+        setRoute('home');
+        setActiveSection(section ?? 'home');
+        window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+        return;
+      }
+      scrollToHomeSection(section ?? 'home');
+    },
+    [route, scrollToHomeSection]
+  );
+
+  const handleNavigate = useCallback(
+    (id: SectionId) => {
+      if (id === 'projects') {
+        openProjectsPage();
+        return;
+      }
+      handleGoHome(id);
+    },
+    [handleGoHome, openProjectsPage]
+  );
+
+  // Sync browser Back / Forward buttons
+  useEffect(() => {
+    const onPopState = () => {
+      const next = readRouteFromLocation();
+      setRoute(next.route);
+      setTargetProjectId(next.projectId);
+      setActiveSection(next.route === 'projects' ? 'projects' : 'home');
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
   const handleInquireService = useCallback(
     (serviceTitle: string) => {
       setPreselectedService(serviceTitle);
-      scrollToSection('contact');
+      handleGoHome('contact');
     },
-    [scrollToSection]
+    [handleGoHome]
   );
 
   const handleJumpToCategory = useCallback(
     (cat: GalleryCategoryId) => {
-      if (cat === 'photography') {
-        scrollToSection('photography');
+      if (cat === 'videography') {
+        openProjectsPage();
         return;
       }
-      if (cat === 'videography') {
-        scrollToSection('videography');
+      if (cat === 'photography') {
+        handleGoHome('photography');
         return;
       }
       if (cat === 'web-design') {
         setActiveDesignTab('web-design');
-        scrollToSection('gallery');
+        handleGoHome('gallery');
         return;
       }
       setActiveDesignTab(cat === 'graphic-design' ? 'projects' : 'all');
-      scrollToSection('gallery');
+      handleGoHome('gallery');
     },
-    [scrollToSection]
+    [handleGoHome, openProjectsPage]
   );
 
   const handleSelectHeroTag = useCallback(
@@ -91,12 +161,12 @@ const App = () => {
         handleJumpToCategory(cat);
         return;
       }
-      scrollToSection('services');
+      handleGoHome('services');
     },
-    [handleJumpToCategory, scrollToSection]
+    [handleJumpToCategory, handleGoHome]
   );
 
-  // Initialize GSAP ScrollSmoother FIRST before any child pinned ScrollTriggers mount
+  // Re-initialize GSAP ScrollSmoother cleanly whenever switching between Home and /projects
   useLayoutEffect(() => {
     ScrollTrigger.config({ ignoreMobileResize: true });
 
@@ -112,10 +182,18 @@ const App = () => {
         effects: true,
         smoothTouch: false,
       });
+      smootherRef.current.scrollTop(0);
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    if (progressRef.current) {
+      gsap.set(progressRef.current, { scaleX: 0 });
     }
 
     const readyRaf = window.requestAnimationFrame(() => {
       setSmootherReady(true);
+      ScrollTrigger.refresh();
     });
 
     const onWindowLoad = () => ScrollTrigger.refresh();
@@ -137,13 +215,26 @@ const App = () => {
       progressTrigger.kill();
       smootherRef.current?.kill();
       smootherRef.current = null;
+      ScrollTrigger.getAll().forEach((t) => t.kill());
       setSmootherReady(false);
     };
-  }, []);
+  }, [route]);
 
-  // Active section scroll-spy via ScrollTrigger
+  // Execute deferred section scroll after returning from /projects to Home
   useEffect(() => {
-    if (!smootherReady) return;
+    if (route !== 'home' || !smootherReady || !pendingHomeSectionRef.current) return;
+    const sec = pendingHomeSectionRef.current;
+    pendingHomeSectionRef.current = null;
+    if (sec === 'home') return;
+    const timer = window.setTimeout(() => {
+      scrollToHomeSection(sec);
+    }, 120);
+    return () => window.clearTimeout(timer);
+  }, [route, smootherReady, scrollToHomeSection]);
+
+  // Active section scroll-spy on Home page via ScrollTrigger
+  useEffect(() => {
+    if (route !== 'home' || !smootherReady) return;
     const triggers = SECTION_IDS.map((id) => {
       const el = document.getElementById(id);
       if (!el) return null;
@@ -151,8 +242,8 @@ const App = () => {
         trigger: el,
         start: 'top 42%',
         end: 'bottom 42%',
-        onEnter: () => setActiveSection(id),
-        onEnterBack: () => setActiveSection(id),
+        onEnter: () => setActiveSection(id === 'videography' ? 'projects' : id),
+        onEnterBack: () => setActiveSection(id === 'videography' ? 'projects' : id),
       });
     });
 
@@ -164,7 +255,7 @@ const App = () => {
       window.clearTimeout(refreshTimer);
       triggers.forEach((t) => t?.kill());
     };
-  }, [smootherReady]);
+  }, [route, smootherReady]);
 
   return (
     <>
@@ -175,8 +266,11 @@ const App = () => {
         <div ref={progressRef} className="scroll-progress-fill" />
       </div>
 
-      {/* Fixed Navigation Bar (outside ScrollSmoother so fixed stays crisp) */}
-      <Navbar activeSection={activeSection} onNavigate={scrollToSection} />
+      {/* Fixed Navigation Bar (works across both Home and /projects) */}
+      <Navbar
+        activeSection={route === 'projects' ? 'projects' : activeSection}
+        onNavigate={handleNavigate}
+      />
 
       {/* GSAP ScrollSmoother Wrapper */}
       <div id="smooth-wrapper">
@@ -190,24 +284,40 @@ const App = () => {
 
             <div className="editorial-frame">
               <main>
-                <Hero onNavigate={scrollToSection} onSelectServiceTag={handleSelectHeroTag} />
-                <ProjectGallery
-                  activeTab={activeDesignTab}
-                  onChangeTab={setActiveDesignTab}
-                />
-                <Services onInquireService={handleInquireService} />
-                <ScrubbedBentoGallery ready={smootherReady} />
-                <HorizontalScrollGallery ready={smootherReady} />
-                <Clients />
-                <ImpactAbout onNavigate={scrollToSection} ready={smootherReady} />
-                <Contact
-                  selectedService={preselectedService}
-                  onSelectService={setPreselectedService}
-                />
+                {route === 'projects' ? (
+                  <ProjectsPage
+                    ready={smootherReady}
+                    initialProjectId={targetProjectId}
+                    onGoHome={handleGoHome}
+                  />
+                ) : (
+                  <>
+                    <Hero
+                      onNavigate={handleNavigate}
+                      onSelectServiceTag={handleSelectHeroTag}
+                    />
+                    <ProjectGallery
+                      activeTab={activeDesignTab}
+                      onChangeTab={setActiveDesignTab}
+                    />
+                    <Services onInquireService={handleInquireService} />
+                    <ScrubbedBentoGallery ready={smootherReady} />
+                    <HorizontalScrollGallery
+                      ready={smootherReady}
+                      onOpenProjectsPage={openProjectsPage}
+                    />
+                    <Clients />
+                    <ImpactAbout onNavigate={handleNavigate} ready={smootherReady} />
+                    <Contact
+                      selectedService={preselectedService}
+                      onSelectService={setPreselectedService}
+                    />
+                  </>
+                )}
               </main>
 
               <Footer
-                onNavigate={scrollToSection}
+                onNavigate={handleNavigate}
                 onJumpToCategory={handleJumpToCategory}
               />
             </div>

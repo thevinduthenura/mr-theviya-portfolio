@@ -171,3 +171,34 @@ export interface ContactFormState {
   service: string;
   message: string;
 }
+
+export type SocialEmbedKind = 'instagram-reel' | 'instagram-post' | 'facebook-video' | 'youtube';
+
+export interface SocialMediaItem {
+  id: string;
+  title: string;
+  kind: SocialEmbedKind;
+  platform: 'Instagram' | 'Facebook' | 'YouTube';
+  handle: string;
+  originalUrl: string;
+  embedUrl: string;
+  posterImage: string;
+  caption: string;
+  credits?: string;
+}
+
+export interface SocialProjectGroup {
+  id: string;
+  num: string;
+  sourceBadge: string;
+  title: string;
+  subtitle: string;
+  organization: string;
+  period: string;
+  role: string;
+  description: string;
+  tags: string[];
+  sourceUrl: string;
+  sourceLabel: string;
+  media: SocialMediaItem[];
+}

@@ -1,69 +1,56 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { BRAND, GALLERY_PROJECTS } from '../data/portfolio';
-import type { GalleryProject } from '../types/portfolio';
+import { SOCIAL_PROJECT_GROUPS } from '../data/socialProjects';
 import KineticHeading from './KineticHeading';
 import './HorizontalScrollGallery.css';
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+gsap.registerPlugin(ScrollTrigger);
 
 interface HorizontalScrollGalleryProps {
   ready?: boolean;
+  onOpenProjectsPage: (projectId?: string) => void;
 }
 
 /**
- * Videography & Motion Showcase (04 Real Video Reels + Live Embedded YouTube Player)
- * Zero vertical scroll-trapping on trackpads: smooth GSAP reveal + playable on-site reel
- * + horizontal swipeable / clickable reel strip with full lightbox preview.
+ * Compact Home Page Teaser for Videography, Reels & Live LinkedIn/Instagram Projects.
+ * Clicking any project card or CTA navigates to the dedicated /projects page
+ * with all 34 live Instagram/Facebook embeds and full GSAP ScrollTrigger timeline.
  */
-const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps) => {
+const HorizontalScrollGallery = ({
+  ready = true,
+  onOpenProjectsPage,
+}: HorizontalScrollGalleryProps) => {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const [modalItem, setModalItem] = useState<GalleryProject | null>(null);
-  const [playingFeatured, setPlayingFeatured] = useState<boolean>(false);
-  const lastModalWheelRef = useRef<number>(0);
+  const [playingYoutube, setPlayingYoutube] = useState<boolean>(false);
 
-  // ONLY the 4 real Videography & Motion reels (accurate 01 / 04 count!)
-  const items = useMemo<GalleryProject[]>(
-    () => GALLERY_PROJECTS.filter((p) => p.category === 'videography'),
+  const featuredYoutube = useMemo(
+    () => GALLERY_PROJECTS.find((p) => p.category === 'videography' && Boolean(p.youtubeEmbedId)),
     []
   );
 
-  const featuredYoutube = useMemo(
-    () => items.find((it) => Boolean(it.youtubeEmbedId)) ?? items[0],
-    [items]
-  );
-
-  const stepModalItem = useCallback(
-    (dir: 1 | -1) => {
-      setModalItem((curr) => {
-        if (!curr) return curr;
-        const idx = items.findIndex((it) => it.id === curr.id);
-        return items[(idx + dir + items.length) % items.length];
-      });
-    },
-    [items]
+  const totalMediaCount = useMemo(
+    () => SOCIAL_PROJECT_GROUPS.reduce((acc, g) => acc + g.media.length, 0),
+    []
   );
 
   useEffect(() => {
     if (!ready || !sectionRef.current) return;
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const ctx = gsap.context(() => {
-      const cards = sectionRef.current?.querySelectorAll('.hs-panel');
+      const cards = sectionRef.current?.querySelectorAll('.hs-teaser-card');
       if (cards?.length) {
         gsap.from(cards, {
-          y: 22,
-          duration: 0.65,
+          y: 26,
+          duration: 0.68,
           stagger: 0.08,
           ease: 'power3.out',
           immediateRender: false,
           clearProps: 'transform',
           scrollTrigger: {
-            trigger: '.hs-reels-grid',
+            trigger: '.hs-teaser-grid',
             start: 'top 88%',
             once: true,
           },
@@ -74,30 +61,10 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
     return () => ctx.revert();
   }, [ready]);
 
-  useEffect(() => {
-    if (!modalItem) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const smoother = ScrollSmoother.get();
-    smoother?.paused(true);
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setModalItem(null);
-      if (e.key === 'ArrowRight') stepModalItem(1);
-      if (e.key === 'ArrowLeft') stepModalItem(-1);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      smoother?.paused(false);
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [modalItem, stepModalItem]);
-
   return (
     <section id="videography" ref={sectionRef} className="section-block hs-section">
       <div className="section-container">
-        {/* Clean Header */}
+        {/* Clean Editorial Header */}
         <div className="hs-top-bar">
           <div>
             <div className="hs-eyebrow">
@@ -111,31 +78,74 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
                   />
                 </svg>
               </span>
-              <span className="micro-label">VIDEOGRAPHY &amp; MOTION · 04 REELS</span>
+              <span className="micro-label">
+                VIDEOGRAPHY &amp; SOCIAL PROJECTS · 0{SOCIAL_PROJECT_GROUPS.length} PROJECTS ·{' '}
+                {totalMediaCount} LIVE EMBEDS
+              </span>
             </div>
             <KineticHeading
               as="h2"
               className="editorial-display hs-heading"
               lines={[
-                { text: 'MOTION & REELS', tone: 'primary' },
-                { text: 'aftermovies, trailers & edits', tone: 'reina' },
+                { text: 'MOTION & PROJECTS', tone: 'primary' },
+                { text: 'linkedin reels, aftermovies & instagram feeds', tone: 'reina' },
               ]}
             />
           </div>
 
           <div className="hs-top-right">
-            <span className="hs-counter reina-display">04 reels</span>
+            <button
+              type="button"
+              className="pill-btn pill-btn-solid"
+              onClick={() => onOpenProjectsPage()}
+            >
+              Open Full Projects Page ({totalMediaCount} Live) →
+            </button>
             <a href={BRAND.youtube} target="_blank" rel="noreferrer" className="pill-btn">
               @SLVisualizer YouTube ↗
             </a>
           </div>
         </div>
 
-        {/* Live Playable Featured Reel Right On-Site (Click-to-Play Facade + Live Embed) */}
+        {/* 5 Project-Wise Teaser Cards Linking Straight to Dedicated /projects Page */}
+        <div className="hs-teaser-grid">
+          {SOCIAL_PROJECT_GROUPS.map((group) => {
+            const cover = group.media[0]?.posterImage;
+            return (
+              <button
+                key={group.id}
+                type="button"
+                className="hs-teaser-card glass-panel"
+                onClick={() => onOpenProjectsPage(group.id)}
+              >
+                <div className="hs-teaser-media">
+                  <img src={cover} alt={group.title} loading="lazy" decoding="async" />
+                  <span className="hs-teaser-num">{group.num}</span>
+                  <span className="hs-teaser-count">{group.media.length} LIVE LINKS</span>
+                  <span className="hs-teaser-play" aria-hidden="true">
+                    ▶
+                  </span>
+                </div>
+
+                <div className="hs-teaser-body">
+                  <span className="hs-teaser-org">{group.organization}</span>
+                  <h3>{group.title}</h3>
+                  <p>{group.role}</p>
+                  <div className="hs-teaser-foot">
+                    <span>{group.period}</span>
+                    <span className="hs-teaser-cta">Open Project →</span>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Click-to-Play Featured YouTube Reel Right on Home */}
         {featuredYoutube?.youtubeEmbedId && (
           <div className="hs-featured-player glass-panel">
             <div className="hs-featured-embed">
-              {playingFeatured ? (
+              {playingYoutube ? (
                 <iframe
                   src={`https://www.youtube.com/embed/${featuredYoutube.youtubeEmbedId}?autoplay=1&rel=0`}
                   title={featuredYoutube.title}
@@ -146,7 +156,7 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
                 <button
                   type="button"
                   className="hs-featured-facade"
-                  onClick={() => setPlayingFeatured(true)}
+                  onClick={() => setPlayingYoutube(true)}
                   aria-label={`Play ${featuredYoutube.title}`}
                 >
                   <img
@@ -169,14 +179,13 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
               <h3 className="reina-display">{featuredYoutube.title.toLowerCase()}</h3>
               <p>{featuredYoutube.summary}</p>
               <div className="hs-featured-actions">
-                <a
-                  href={BRAND.youtube}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
                   className="pill-btn pill-btn-solid"
+                  onClick={() => onOpenProjectsPage()}
                 >
-                  Watch Channel ↗
-                </a>
+                  View All {totalMediaCount} Live Embeds →
+                </button>
                 <a href={BRAND.driveSamples} target="_blank" rel="noreferrer" className="pill-btn">
                   Full Drive Reels ↗
                 </a>
@@ -184,128 +193,7 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
             </div>
           </div>
         )}
-
-        {/* 4 Real Video Reel Cards (Grid on Desktop, Smooth Horizontal Swipe on Mobile) */}
-        <div className="hs-reels-grid">
-          {items.map((item, idx) => (
-            <article key={item.id} className="hs-panel">
-              <button
-                type="button"
-                className="hs-frame"
-                onClick={() => setModalItem(item)}
-                aria-label={`Preview ${item.title}`}
-              >
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="hs-frame-img"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <span className="hs-play-pill" aria-hidden="true">
-                  ▶
-                </span>
-              </button>
-
-              <div className="hs-caption">
-                <div className="hs-caption-top">
-                  <span className="hs-index">0{idx + 1} / 0{items.length}</span>
-                  <span className="hs-platform">{item.mediaFormat ?? item.primaryPlatform}</span>
-                </div>
-                <h3>{item.title}</h3>
-                <div className="hs-caption-foot">
-                  <span>{item.client}</span>
-                  <button
-                    type="button"
-                    className="hs-open-btn"
-                    onClick={() => setModalItem(item)}
-                  >
-                    Preview ↗
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
       </div>
-
-      {/* Portal Video Preview Lightbox */}
-      {modalItem &&
-        createPortal(
-          <div
-            className="hs-modal-backdrop"
-            role="dialog"
-            aria-modal="true"
-            aria-label={modalItem.title}
-            onClick={() => setModalItem(null)}
-            onWheel={(e) => {
-              e.stopPropagation();
-              const now = performance.now();
-              if (now - lastModalWheelRef.current < 240) return;
-              const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-              if (Math.abs(delta) < 8) return;
-              lastModalWheelRef.current = now;
-              stepModalItem(delta > 0 ? 1 : -1);
-            }}
-          >
-            <div className="hs-modal glass-panel" onClick={(e) => e.stopPropagation()}>
-              <button
-                type="button"
-                className="hs-modal-close"
-                onClick={() => setModalItem(null)}
-                aria-label="Close preview"
-              >
-                ✕
-              </button>
-
-              {modalItem.youtubeEmbedId ? (
-                <div className="hs-modal-embed">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${modalItem.youtubeEmbedId}?rel=0`}
-                    title={modalItem.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              ) : (
-                <div className="hs-modal-media">
-                  <img src={modalItem.image} alt={modalItem.title} />
-                  <a
-                    href={modalItem.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hs-modal-play"
-                  >
-                    <span>▶</span>
-                    Watch Reel on {modalItem.primaryPlatform} ↗
-                  </a>
-                </div>
-              )}
-
-              <div className="hs-modal-info">
-                <span className="micro-label">
-                  {modalItem.primaryPlatform} · {modalItem.client} · {modalItem.year}
-                </span>
-                <h3 className="reina-display">{modalItem.title.toLowerCase()}</h3>
-                <p>{modalItem.summary}</p>
-                <div className="hs-modal-links">
-                  {modalItem.socialLinks.map((sl, i) => (
-                    <a
-                      key={sl.platform}
-                      href={sl.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`pill-btn${i === 0 ? ' pill-btn-solid' : ''}`}
-                    >
-                      {sl.platform} ↗
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
     </section>
   );
 };

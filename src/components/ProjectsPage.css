@@ -1,0 +1,71 @@
+.pp-page {
+  position: relative;
+  padding: clamp(104px, 11vw, 136px) 0 clamp(68px, 7vw, 96px);
+  background:
+    radial-gradient(ellipse 68% 40% at 22% 8%, rgba(168, 24, 10, 0.2), transparent 66%),
+    radial-gradient(ellipse 55% 38% at 86% 64%, rgba(196, 48, 16, 0.12), transparent 68%),
+    #090505;
+}
+
+.pp-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.pp-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.pp-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-warm);
+  background: rgba(244, 237, 232, 0.045);
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-primary);
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.pp-back-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #080404;
+  transform: translateX(-2px);
+}
+
+.pp-hero-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pp-heading {
+  font-size: clamp(2.1rem, 4.8vw, 4.1rem);
+  line-height: 0.94;
+}
+
+.pp-hero-copy {
+  max-width: 720px;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--ink-body);
+}
+
+.pp-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

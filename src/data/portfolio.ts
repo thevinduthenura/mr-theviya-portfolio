@@ -60,7 +60,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'gallery', label: 'Design' },
   { id: 'services', label: 'Services' },
   { id: 'photography', label: 'Photos' },
-  { id: 'videography', label: 'Reels' },
+  { id: 'projects', label: 'Projects' },
   { id: 'about', label: 'About' },
   { id: 'contact', label: 'Contact' },
 ];
