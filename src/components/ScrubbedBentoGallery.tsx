@@ -63,7 +63,7 @@ const ScrubbedBentoGallery = ({ ready = true }: ScrubbedBentoGalleryProps) => {
     [photoShoots]
   );
 
-  // 8 bento hero slots across all 7 shoots + extra Blue Beach B&W artistic frame
+  // Exact 7 unique bento slots matching the 7 distinct photography collections (zero repeats!)
   const bentoTiles = useMemo(() => {
     const get = (idx: number) => photoShoots[idx] ?? photoShoots[0];
     return [
@@ -87,7 +87,7 @@ const ScrubbedBentoGallery = ({ ready = true }: ScrubbedBentoGalleryProps) => {
         key: 'bento-3',
         image: get(0).image,
         label: get(0).title,
-        sub: 'Stage Monochrome',
+        sub: 'Live Concert Stage',
         shoot: get(0),
         initialSlide: 0,
       },
@@ -111,20 +111,12 @@ const ScrubbedBentoGallery = ({ ready = true }: ScrubbedBentoGalleryProps) => {
         key: 'bento-6',
         image: get(4).image,
         label: get(4).title,
-        sub: 'Event Story (20)',
+        sub: 'Book Launch Story',
         shoot: get(4),
         initialSlide: 0,
       },
       {
         key: 'bento-7',
-        image: get(5).galleryImages?.[1] ?? get(5).image,
-        label: 'Blue Beach - Monochrome',
-        sub: 'B&W Horizon',
-        shoot: get(5),
-        initialSlide: 1,
-      },
-      {
-        key: 'bento-8',
         image: get(6).image,
         label: get(6).title,
         sub: 'Celebration Portraits',
@@ -198,22 +190,22 @@ const ScrubbedBentoGallery = ({ ready = true }: ScrubbedBentoGalleryProps) => {
         scrollTrigger: {
           trigger: wrapEl,
           start: 'top top',
-          end: '+=135%',
+          end: '+=55%',
           pin: true,
           pinSpacing: true,
-          scrub: 0.85,
+          scrub: 0.65,
           anticipatePin: 1,
         },
       });
 
       tl.fromTo(
         gridEl,
-        { scale: 2.15, transformOrigin: '50% 50%' },
+        { scale: 1.55, transformOrigin: '50% 50%' },
         { scale: 1, ease: 'none', duration: 1 },
         0
       )
-        .fromTo(outerTiles, { opacity: 0.18 }, { opacity: 1, ease: 'none', duration: 0.75 }, 0.15)
-        .fromTo(tileImgs, { scale: 1.18 }, { scale: 1, ease: 'none', duration: 1 }, 0);
+        .fromTo(outerTiles, { opacity: 0.35 }, { opacity: 1, ease: 'none', duration: 0.7 }, 0.1)
+        .fromTo(tileImgs, { scale: 1.12 }, { scale: 1, ease: 'none', duration: 1 }, 0);
     });
 
     mm.add('(max-width: 859px)', () => {
@@ -454,7 +446,7 @@ const ScrubbedBentoGallery = ({ ready = true }: ScrubbedBentoGalleryProps) => {
               </svg>
             </span>
             <span className="micro-label">
-              PHOTOGRAPHY · {totalPhotoCount} FRAMES · GSAP SCRUBBED BENTO
+              PHOTOGRAPHY · 7 COLLECTIONS · {totalPhotoCount} FRAMES
             </span>
           </div>
           <KineticHeading
@@ -469,8 +461,8 @@ const ScrubbedBentoGallery = ({ ready = true }: ScrubbedBentoGalleryProps) => {
 
         <div className="sb-header-meta">
           <p>
-            Scroll to pull back from the centerpiece into 7 complete photography shoots (
-            {totalPhotoCount} curated frames) - click any photograph to inspect full-bleed.
+            Seven complete shoots spanning live concerts, graduations, coastal editorials, and
+            portraits - click any frame to open the full collection viewer.
           </p>
           <a href={BRAND.instagram} target="_blank" rel="noreferrer" className="pill-btn">
             @mr.theviya on Instagram ↗

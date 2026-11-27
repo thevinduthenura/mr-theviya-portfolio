@@ -98,6 +98,7 @@ const KineticHeading = ({ lines, as = 'h2', className = '' }: KineticHeadingProp
   }, []);
 
   const Tag = as;
+  const fullText = lines.map((l) => l.text).join(' ');
 
   return (
     <Tag
@@ -105,8 +106,8 @@ const KineticHeading = ({ lines, as = 'h2', className = '' }: KineticHeadingProp
       className={`kinetic-heading ${className}`}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      aria-label={lines.map((l) => l.text).join(' ')}
     >
+      <span className="sr-only">{fullText}</span>
       {lines.map((line, lineIdx) => (
         <span
           key={`${line.text}-${lineIdx}`}

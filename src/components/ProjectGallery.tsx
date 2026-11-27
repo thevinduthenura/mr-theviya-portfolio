@@ -106,25 +106,28 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
     });
   }, [expandedId, activeTab]);
 
-  // Subtle GSAP ScrollTrigger.batch staggered entrance (smooth on both desktop & mobile!)
+  // Subtle GSAP ScrollTrigger.batch lift (always visible by default so jump-scroll never leaves cards blank)
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const ctx = gsap.context(() => {
       const cards = grid.querySelectorAll('.ag-item');
-      gsap.set(cards, { y: 32, opacity: 0 });
       ScrollTrigger.batch(cards, {
-        start: 'top 90%',
+        start: 'top 92%',
         once: true,
         onEnter: (batch) => {
-          gsap.to(batch, {
-            y: 0,
-            opacity: 1,
-            duration: 0.65,
-            stagger: 0.06,
-            ease: 'power3.out',
-            clearProps: 'transform,opacity',
-          });
+          gsap.fromTo(
+            batch,
+            { y: 20 },
+            {
+              y: 0,
+              duration: 0.55,
+              stagger: 0.04,
+              ease: 'power3.out',
+              clearProps: 'transform',
+            }
+          );
         },
       });
     }, sectionRef);
@@ -276,15 +279,15 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
                   />
                 </svg>
               </span>
-              <span className="micro-label">GRAPHIC &amp; WEB DESIGN · GSAP FLIP GRID POSITIONS</span>
+              <span className="micro-label">SELECTED WORK · GRAPHIC &amp; WEB DESIGN</span>
             </div>
 
             <KineticHeading
               as="h2"
               className="editorial-display ag-heading"
               lines={[
-                { text: 'DESIGN EXHIBITION', tone: 'primary' },
-                { text: 'click any piece to expand', tone: 'reina' },
+                { text: 'SELECTED DESIGN', tone: 'primary' },
+                { text: 'click any project for case study', tone: 'reina' },
               ]}
             />
           </div>
@@ -384,7 +387,24 @@ const ProjectGallery = ({ activeTab, onChangeTab }: ProjectGalleryProps) => {
 
                   {isExpanded && (
                     <div className="ag-expanded-details" onClick={(e) => e.stopPropagation()}>
-                      <p>{item.summary}</p>
+                      {item.caseStudy ? (
+                        <div className="ag-case-study">
+                          <div>
+                            <span className="ag-cs-label">MY ROLE</span>
+                            <p>{item.caseStudy.role}</p>
+                          </div>
+                          <div>
+                            <span className="ag-cs-label">THE BRIEF</span>
+                            <p>{item.caseStudy.brief}</p>
+                          </div>
+                          <div>
+                            <span className="ag-cs-label">OUTCOME</span>
+                            <p>{item.caseStudy.outcome}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p>{item.summary}</p>
+                      )}
                       {slides.length > 1 && (
                         <div className="ag-inline-thumbs">
                           {slides.map((src, idx) => (

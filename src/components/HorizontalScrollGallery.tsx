@@ -10,33 +10,30 @@ import './HorizontalScrollGallery.css';
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-/**
- * GSAP Horizontal Scrolling Gallery (inspired by demos.gsap.com/demo/horizontal-scrolling-gallery/)
- * Showcases Videography Social Previews + Flagship Campaigns in a pinned horizontal cinema rail
- * with inner image parallax (containerAnimation) and zero clutter over the visuals.
- */
 interface HorizontalScrollGalleryProps {
   ready?: boolean;
 }
 
+/**
+ * Videography & Motion Showcase (04 Real Video Reels + Live Embedded YouTube Player)
+ * Zero vertical scroll-trapping on trackpads: smooth GSAP reveal + playable on-site reel
+ * + horizontal swipeable / clickable reel strip with full lightbox preview.
+ */
 const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps) => {
-  const pinRef = useRef<HTMLDivElement | null>(null);
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const progressBarRef = useRef<HTMLDivElement | null>(null);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [modalItem, setModalItem] = useState<GalleryProject | null>(null);
+  const [playingFeatured, setPlayingFeatured] = useState<boolean>(false);
   const lastModalWheelRef = useRef<number>(0);
 
-  // Curate Videography (4) + Flagship Visual Projects (4) = 8 clean horizontal cinema panels
+  // ONLY the 4 real Videography & Motion reels (accurate 01 / 04 count!)
   const items = useMemo<GalleryProject[]>(
-    () => [
-      ...GALLERY_PROJECTS.filter((p) => p.category === 'videography'),
-      ...GALLERY_PROJECTS.filter((p) =>
-        ['proj-wiramaya', 'proj-sunway', 'proj-christmas-promise', 'wd-cinevault'].includes(p.id)
-      ),
-    ],
+    () => GALLERY_PROJECTS.filter((p) => p.category === 'videography'),
     []
+  );
+
+  const featuredYoutube = useMemo(
+    () => items.find((it) => Boolean(it.youtubeEmbedId)) ?? items[0],
+    [items]
   );
 
   const stepModalItem = useCallback(
@@ -51,103 +48,31 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
   );
 
   useEffect(() => {
-    if (!ready) return;
-    const pinEl = pinRef.current;
-    const trackEl = trackRef.current;
-    if (!pinEl || !trackEl) return;
-
+    if (!ready || !sectionRef.current) return;
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) return;
 
-    // Desktop (>= 860px): pinned GSAP horizontal cinema rail + inner parallax
-    // Mobile (< 860px): silky native horizontal touch-swipe snap carousel
-    const mm = gsap.matchMedia();
-
-    mm.add('(min-width: 860px)', () => {
-      const getScrollAmount = () => Math.max(0, trackEl.scrollWidth - pinEl.clientWidth + 96);
-
-      const horizontalTween = gsap.to(trackEl, {
-        x: () => -getScrollAmount(),
-        ease: 'none',
-        scrollTrigger: {
-          trigger: pinEl,
-          start: 'top top',
-          end: () => `+=${Math.max(900, getScrollAmount())}`,
-          pin: true,
-          pinSpacing: true,
-          scrub: 0.9,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            if (progressBarRef.current) {
-              gsap.set(progressBarRef.current, { scaleX: self.progress });
-            }
-            const idx = Math.min(items.length - 1, Math.floor(self.progress * items.length));
-            setActiveIndex((prev) => (prev === idx ? prev : idx));
-          },
-        },
-      });
-
-      // Inner parallax on every horizontal panel image via containerAnimation
-      const imgs = trackEl.querySelectorAll<HTMLImageElement>('.hs-frame-img');
-      imgs.forEach((img) => {
-        gsap.fromTo(
-          img,
-          { xPercent: -9, scale: 1.16 },
-          {
-            xPercent: 9,
-            scale: 1.16,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: img.closest('.hs-panel'),
-              containerAnimation: horizontalTween,
-              start: 'left right',
-              end: 'right left',
-              scrub: true,
-            },
-          }
-        );
-      });
-    });
-
-    // Mobile (< 860px): crisp GSAP ScrollTrigger entrance for the touch-swipe cinema rail
-    mm.add('(max-width: 859px)', () => {
-      const panels = trackEl.querySelectorAll<HTMLElement>('.hs-panel');
-      gsap.fromTo(
-        panels,
-        { x: 36, opacity: 0, scale: 0.94 },
-        {
-          x: 0,
-          opacity: 1,
-          scale: 1,
+    const ctx = gsap.context(() => {
+      const cards = sectionRef.current?.querySelectorAll('.hs-panel');
+      if (cards?.length) {
+        gsap.from(cards, {
+          y: 22,
           duration: 0.65,
           stagger: 0.08,
           ease: 'power3.out',
-          clearProps: 'transform,opacity',
+          immediateRender: false,
+          clearProps: 'transform',
           scrollTrigger: {
-            trigger: pinEl,
-            start: 'top 84%',
+            trigger: '.hs-reels-grid',
+            start: 'top 88%',
             once: true,
           },
-        }
-      );
-    });
+        });
+      }
+    }, sectionRef);
 
-    ScrollTrigger.refresh();
-    return () => mm.revert();
-  }, [items.length, ready]);
-
-  const handleMobileSwipeScroll = () => {
-    const vp = viewportRef.current;
-    if (!vp) return;
-    const maxScroll = Math.max(1, vp.scrollWidth - vp.clientWidth);
-    const ratio = Math.min(1, Math.max(0, vp.scrollLeft / maxScroll));
-    if (progressBarRef.current) {
-      progressBarRef.current.style.transform = `scaleX(${ratio})`;
-    }
-    const idx = Math.min(items.length - 1, Math.round(ratio * (items.length - 1)));
-    setActiveIndex((prev) => (prev === idx ? prev : idx));
-  };
+    return () => ctx.revert();
+  }, [ready]);
 
   useEffect(() => {
     if (!modalItem) return;
@@ -170,10 +95,10 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
   }, [modalItem, stepModalItem]);
 
   return (
-    <section id="videography" className="hs-section">
-      <div ref={pinRef} className="hs-pin-stage">
-        {/* Top Clean Strip */}
-        <div className="section-container hs-top-bar">
+    <section id="videography" ref={sectionRef} className="section-block hs-section">
+      <div className="section-container">
+        {/* Clean Header */}
+        <div className="hs-top-bar">
           <div>
             <div className="hs-eyebrow">
               <span className="editorial-asterisk" aria-hidden="true">
@@ -186,101 +111,125 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
                   />
                 </svg>
               </span>
-              <span className="micro-label">VIDEOGRAPHY &amp; REELS · GSAP HORIZONTAL GALLERY</span>
+              <span className="micro-label">VIDEOGRAPHY &amp; MOTION · 04 REELS</span>
             </div>
             <KineticHeading
               as="h2"
               className="editorial-display hs-heading"
               lines={[
                 { text: 'MOTION & REELS', tone: 'primary' },
-                { text: 'cinema filmstrip', tone: 'reina' },
+                { text: 'aftermovies, trailers & edits', tone: 'reina' },
               ]}
             />
           </div>
 
           <div className="hs-top-right">
-            <span className="hs-counter reina-display">
-              0{activeIndex + 1} / 0{items.length}
-            </span>
-            <a href={BRAND.driveSamples} target="_blank" rel="noreferrer" className="pill-btn">
-              Google Drive Reels ↗
+            <span className="hs-counter reina-display">04 reels</span>
+            <a href={BRAND.youtube} target="_blank" rel="noreferrer" className="pill-btn">
+              @SLVisualizer YouTube ↗
             </a>
           </div>
         </div>
 
-        {/* Horizontal Gliding Filmstrip Track */}
-        <div
-          ref={viewportRef}
-          className="hs-viewport"
-          onScroll={handleMobileSwipeScroll}
-        >
-          <div ref={trackRef} className="hs-track">
-            {items.map((item, idx) => {
-              const isVideo = item.category === 'videography';
-              const isFocused = idx === activeIndex;
-              return (
-                <article
-                  key={item.id}
-                  className={`hs-panel${isFocused ? ' is-focused' : ''}`}
+        {/* Live Playable Featured Reel Right On-Site (Click-to-Play Facade + Live Embed) */}
+        {featuredYoutube?.youtubeEmbedId && (
+          <div className="hs-featured-player glass-panel">
+            <div className="hs-featured-embed">
+              {playingFeatured ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${featuredYoutube.youtubeEmbedId}?autoplay=1&rel=0`}
+                  title={featuredYoutube.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="hs-featured-facade"
+                  onClick={() => setPlayingFeatured(true)}
+                  aria-label={`Play ${featuredYoutube.title}`}
                 >
+                  <img
+                    src={featuredYoutube.image}
+                    alt={featuredYoutube.title}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span className="hs-facade-overlay">
+                    <span className="hs-facade-play" aria-hidden="true">
+                      ▶
+                    </span>
+                    <span className="hs-facade-label">PLAY YOUTUBE REEL ON SITE</span>
+                  </span>
+                </button>
+              )}
+            </div>
+            <div className="hs-featured-meta">
+              <span className="micro-label">FEATURED PLAYABLE EDIT · YOUTUBE</span>
+              <h3 className="reina-display">{featuredYoutube.title.toLowerCase()}</h3>
+              <p>{featuredYoutube.summary}</p>
+              <div className="hs-featured-actions">
+                <a
+                  href={BRAND.youtube}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="pill-btn pill-btn-solid"
+                >
+                  Watch Channel ↗
+                </a>
+                <a href={BRAND.driveSamples} target="_blank" rel="noreferrer" className="pill-btn">
+                  Full Drive Reels ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 4 Real Video Reel Cards (Grid on Desktop, Smooth Horizontal Swipe on Mobile) */}
+        <div className="hs-reels-grid">
+          {items.map((item, idx) => (
+            <article key={item.id} className="hs-panel">
+              <button
+                type="button"
+                className="hs-frame"
+                onClick={() => setModalItem(item)}
+                aria-label={`Preview ${item.title}`}
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="hs-frame-img"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span className="hs-play-pill" aria-hidden="true">
+                  ▶
+                </span>
+              </button>
+
+              <div className="hs-caption">
+                <div className="hs-caption-top">
+                  <span className="hs-index">0{idx + 1} / 0{items.length}</span>
+                  <span className="hs-platform">{item.mediaFormat ?? item.primaryPlatform}</span>
+                </div>
+                <h3>{item.title}</h3>
+                <div className="hs-caption-foot">
+                  <span>{item.client}</span>
                   <button
                     type="button"
-                    className="hs-frame"
+                    className="hs-open-btn"
                     onClick={() => setModalItem(item)}
-                    aria-label={`Preview ${item.title}`}
                   >
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="hs-frame-img"
-                      loading="lazy"
-                    />
-                    {isVideo && (
-                      <span className="hs-play-pill" aria-hidden="true">
-                        ▶
-                      </span>
-                    )}
+                    Preview ↗
                   </button>
-
-                  {/* Clean Museum Caption BELOW image (zero overlap on artwork!) */}
-                  <div className="hs-caption">
-                    <div className="hs-caption-top">
-                      <span className="hs-index">0{idx + 1}</span>
-                      <span className="hs-platform">
-                        {item.primaryPlatform} · {item.categoryLabel}
-                      </span>
-                    </div>
-                    <h3>{item.title}</h3>
-                    <div className="hs-caption-foot">
-                      <span>{item.client}</span>
-                      <button
-                        type="button"
-                        className="hs-open-btn"
-                        onClick={() => setModalItem(item)}
-                      >
-                        {isVideo ? 'Watch Preview ↗' : 'Inspect ↗'}
-                      </button>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Bottom Scrub Progress Bar */}
-        <div className="section-container hs-bottom-bar">
-          <span className="micro-label">SCROLL TO GLIDE HORIZONTALLY</span>
-          <div className="hs-progress-track">
-            <div ref={progressBarRef} className="hs-progress-fill" />
-          </div>
-          <a href={BRAND.youtube} target="_blank" rel="noreferrer" className="micro-label hs-yt-link">
-            @SLVISUALIZER YOUTUBE ↗
-          </a>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
 
-      {/* Portal Video & Social Preview Lightbox */}
+      {/* Portal Video Preview Lightbox */}
       {modalItem &&
         createPortal(
           <div
@@ -321,17 +270,15 @@ const HorizontalScrollGallery = ({ ready = true }: HorizontalScrollGalleryProps)
               ) : (
                 <div className="hs-modal-media">
                   <img src={modalItem.image} alt={modalItem.title} />
-                  {modalItem.category === 'videography' && (
-                    <a
-                      href={modalItem.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="hs-modal-play"
-                    >
-                      <span>▶</span>
-                      Open Reel on {modalItem.primaryPlatform} ↗
-                    </a>
-                  )}
+                  <a
+                    href={modalItem.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hs-modal-play"
+                  >
+                    <span>▶</span>
+                    Watch Reel on {modalItem.primaryPlatform} ↗
+                  </a>
                 </div>
               )}
 

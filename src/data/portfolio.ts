@@ -57,11 +57,11 @@ export const BRAND = {
 
 export const NAV_ITEMS: NavItem[] = [
   { id: 'home', label: 'Home' },
+  { id: 'gallery', label: 'Design' },
+  { id: 'services', label: 'Services' },
   { id: 'photography', label: 'Photos' },
   { id: 'videography', label: 'Reels' },
-  { id: 'gallery', label: 'Design' },
-  { id: 'archive', label: 'Archive' },
-  { id: 'services', label: 'Services' },
+  { id: 'about', label: 'About' },
   { id: 'contact', label: 'Contact' },
 ];
 
@@ -168,11 +168,11 @@ export const GALLERY_CATEGORIES: GalleryCategoryTab[] = [
 ];
 
 export const GRAPHIC_SUB_TABS: GraphicSubTab[] = [
+  { id: 'projects', label: 'Case Studies (09)' },
   { id: 'all', label: 'All Graphic Design (25)' },
-  { id: 'projects', label: 'Full Projects (09)' },
   { id: 'sliit', label: 'SLIIT & Campus (05)' },
   { id: 'clients', label: 'Brands & Posters (06)' },
-  { id: 'other', label: 'School & Other (05)' },
+  { id: 'other', label: 'Sports & Editorial (05)' },
 ];
 
 export const GALLERY_PROJECTS: GalleryProject[] = [
@@ -202,6 +202,13 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     tools: ['Photoshop', 'Compositing', 'Event Branding'],
     summary:
       "Flagship pirate-themed concert campaign for SLIIT FCSC's Wiramaya '26 featuring the official lineup key visual, Sanuka & Dhyan artist reveals, date reveal, and full sponsor lockups.",
+    caseStudy: {
+      role: 'Lead Campaign Designer & Compositor',
+      brief:
+        "Create a cohesive, high-hype pirate-themed visual identity for SLIIT FCSC's flagship annual concert across lineup reveals, date teasers, and sponsor lockups.",
+      outcome:
+        'Delivered a 4-part poster suite and matching vertical reel visuals that drove campus-wide ticket awareness and unified all partner branding.',
+    },
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
@@ -234,6 +241,13 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     tools: ['Campaign Suite', 'Social Countdown', 'Sponsor Design'],
     summary:
       "Complete social campaign identity for SLIIT Walk '26 including event-day visuals, thank-you tributes, collaborating communities, and official sponsor appreciation layouts.",
+    caseStudy: {
+      role: 'Campaign Designer & Visual System Lead',
+      brief:
+        "Build a bold, energetic visual template system for SLIIT's signature annual walk covering countdowns, society shoutouts, and sponsor tiers.",
+      outcome:
+        'Shipped a unified 3-part social identity adopted across student clubs and partner channels throughout event week.',
+    },
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
@@ -266,6 +280,13 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     tools: ['Campaign Identity', 'QR Activation', 'Editorial Type'],
     summary:
       'Multi-part festive charity campaign crafted in deep velvet burgundy and gold foil aesthetics for SLIIT Student Interactive Society and partner societies.',
+    caseStudy: {
+      role: 'Art Director & Key Visual Designer',
+      brief:
+        'Design a warm, upscale charity campaign uniting SLIIT SIS, Choir, and Sports Council with scannable QR donation touchpoints.',
+      outcome:
+        'Created a 4-piece burgundy-and-gold visual suite that lifted student participation and streamlined donation onboarding.',
+    },
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
@@ -298,6 +319,13 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     tools: ['Commercial Ads', 'Automotive Retouch', 'Social Media'],
     summary:
       'Commercial product and trade-in social media ad series created for Sunway Motors featuring TVS iQube EV, TVS Raider, and Race Exchange promotional campaigns.',
+    caseStudy: {
+      role: 'Commercial Social Designer & Retoucher',
+      brief:
+        'Produce thumb-stopping retail creatives for TVS electric and sport motorcycles balancing crisp product lighting with clear offer hierarchy.',
+      outcome:
+        'Delivered high-contrast product ads across 3 flagship models used for paid and organic dealership promotions.',
+    },
     socialFeatured: true,
     primaryPlatform: 'Behance',
     socialHandle: 'mrtheviya1',
@@ -330,6 +358,13 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     tools: ['Corporate Uniforms', 'Social Posts', 'Brand Identity'],
     summary:
       'Corporate branding and uniform design suite for DIDI Facility Services covering long-sleeve workwear mockups and clean commercial social media creatives.',
+    caseStudy: {
+      role: 'Brand Identity & Apparel Designer',
+      brief:
+        'Translate DIDI Facility Services into a trustworthy corporate presence across staff uniforms and B2B social touchpoints.',
+      outcome:
+        'Produced print-ready uniform specs and a clean 4-asset commercial visual suite ready for client deployment.',
+    },
     socialFeatured: true,
     primaryPlatform: 'Behance',
     socialHandle: 'mrtheviya1',
@@ -360,6 +395,13 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     tools: ['Business Card', 'Apparel Brand', 'Packaging'],
     summary:
       'Fashion retail identity package designed for Croptop.lk including business card stationery, brand tags, and social launch visuals.',
+    caseStudy: {
+      role: 'Brand & Print Designer',
+      brief:
+        'Craft a clean, modern retail identity and print stationery set tailored for a Sri Lankan women-led fashion label.',
+      outcome:
+        'Delivered cohesive print-ready business cards, garment tag layouts, and launch creatives.',
+    },
     socialFeatured: true,
     primaryPlatform: 'Behance',
     socialHandle: 'mrtheviya1',
@@ -392,6 +434,13 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     tools: ['Sports Branding', 'Sinhala Type', 'Matchday Series'],
     summary:
       'Multi-season big match campaign across the 73rd & 74th Battle of the Golds and 33rd One Day Encounter featuring captain visuals, countdowns, and scorecards.',
+    caseStudy: {
+      role: 'Sports Campaign Designer',
+      brief:
+        'Unify two consecutive big-match seasons with high-impact player cutouts, custom Sinhala display type, and live matchday templates.',
+      outcome:
+        'Built a reusable matchday visual system spanning captain reveals, countdowns, and real-time score updates.',
+    },
     socialFeatured: true,
     primaryPlatform: 'Facebook',
     socialHandle: 'mr.theviya',
@@ -908,7 +957,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     href: BRAND.instagram,
     tools: ['Low-Light Prime', 'Monochrome Grade', 'Live Stage'],
     summary:
-      'Complete 5-frame moody monochrome and dramatic stage concert set captured live in Kollupitiya with crisp shutter freeze and signature Mr. Theviya tonal grading.',
+      'Complete 5-frame live stage concert set captured in Kollupitiya - blending dramatic amber spotlight shots and monochrome crowd frames with signature Mr. Theviya tonal grading.',
     socialFeatured: true,
     primaryPlatform: 'Instagram',
     socialHandle: '@mr.theviya',
@@ -1422,9 +1471,9 @@ export const SERVICES: ServiceItem[] = [
     title: 'Graphic Design',
     shortTitle: 'Graphic Design',
     description:
-      'Creating visual identities, concert posters, merch packs, magazines, and brand campaigns that command attention.',
-    deliverables: ['Logo Design', 'Event Posters', 'Brand Identity', 'Merch & Print'],
-    image: '/images/projects/graphic-design/wiramaya-1.jpg',
+      'Visual identities, concert campaigns, merchandise packs, magazines, and social systems built to stand out.',
+    deliverables: ['Logo & Brand Identity', 'Concert Campaigns', 'Merch & Print', 'Social Systems'],
+    image: '/images/projects/graphic-design/stationery-suite.jpg',
     ctaLabel: 'Discuss Graphic Design',
   },
   {
@@ -1434,9 +1483,9 @@ export const SERVICES: ServiceItem[] = [
     title: 'Videography & Editing',
     shortTitle: 'Videography',
     description:
-      'High-impact event aftermovies, Instagram & TikTok reels, trailers, color grading, and After Effects VFX.',
-    deliverables: ['After Movies', 'Social Reels', 'Color Grading', 'AE Motion VFX'],
-    image: '/images/projects/videography/hyper-media-reel.jpg',
+      'Event aftermovies, vertical Instagram & TikTok reels, concert trailers, color grading, and After Effects VFX.',
+    deliverables: ['Event Aftermovies', 'Social Reels', 'Color Grading', 'AE Motion VFX'],
+    image: '/images/projects/videography/color-suite.jpg',
     ctaLabel: 'Discuss Videography',
     featured: true,
   },
@@ -1447,9 +1496,9 @@ export const SERVICES: ServiceItem[] = [
     title: 'Photography',
     shortTitle: 'Photography',
     description:
-      'Capturing live concerts, convocations, commercial campaigns, coastal stories, and celebration portraits.',
-    deliverables: ['Concert Coverage', 'Convocation', 'Portraits', 'Editorial Travel'],
-    image: '/images/projects/photography/kollupitiya-1.jpg',
+      'Live concerts, graduation convocations, book launches, coastal editorials, and intimate portrait coverage.',
+    deliverables: ['Live Concerts', 'Convocations', 'Event Stories', 'Editorial Portraits'],
+    image: '/images/editorial/photography-editorial.jpg',
     ctaLabel: 'Discuss Photography',
   },
   {
@@ -1459,9 +1508,9 @@ export const SERVICES: ServiceItem[] = [
     title: 'Web Design & Direction',
     shortTitle: 'Web Design',
     description:
-      'Designing dark-luxury interactive websites, UI systems, and creative direction from Figma to production.',
-    deliverables: ['UI/UX Design', 'Interactive Web', 'Creative Strategy', 'Brand Consulting'],
-    image: '/images/projects/web-design/cinevault-web.jpg',
+      'Dark-luxury interactive websites, responsive UI systems, and visual direction from Figma to production.',
+    deliverables: ['UI/UX Design', 'Interactive Web', 'Design Systems', 'Frontend Polish'],
+    image: '/images/projects/web-design/glass-dashboard.jpg',
     ctaLabel: 'Discuss Web Design',
   },
 ];
@@ -1538,27 +1587,53 @@ export const CONTACT_CHANNELS: ContactChannel[] = [
 ];
 
 export const SOCIAL_LINKS: SocialLink[] = [
-  { label: 'Behance', handle: 'mrtheviya1', abbr: 'BE', href: BRAND.behance, group: 'work' },
-  { label: 'Behance Posters', handle: 'Poster Design', abbr: 'BP', href: BRAND.behancePosters, group: 'work' },
-  { label: 'Drive Samples', handle: 'Video & Design', abbr: 'GD', href: BRAND.driveSamples, group: 'work' },
-  { label: 'Creative CV', handle: 'PDF Resume', abbr: 'CV', href: BRAND.creativeCv, group: 'work' },
-  { label: 'Fiverr', handle: 'Mr.Theviya', abbr: 'FV', href: 'https://www.fiverr.com/pe/WL39d7', group: 'work' },
+  { label: 'Behance', handle: 'mrtheviya1', abbr: 'Behance', href: BRAND.behance, group: 'work' },
+  { label: 'Instagram', handle: '@mr.theviya', abbr: 'Instagram', href: BRAND.instagram, group: 'brand' },
+  { label: 'LinkedIn', handle: 'Thevindu Gunathilaka', abbr: 'LinkedIn', href: BRAND.linkedin, group: 'personal' },
+  { label: 'YouTube', handle: '@slvisualizer', abbr: 'YouTube', href: BRAND.youtube, group: 'brand' },
+  { label: 'GitHub', handle: 'thevinduthenura', abbr: 'GitHub', href: BRAND.github, group: 'work' },
+  { label: 'WhatsApp', handle: '+94 76 572 8960', abbr: 'WhatsApp', href: BRAND.whatsappDirect, group: 'work' },
+  { label: 'Linktree', handle: 'linktr.ee/mr.theviya', abbr: 'Linktree', href: BRAND.linktreeBrand, group: 'brand' },
+];
+
+export const TOOLSTACK: { name: string; role: string }[] = [
+  { name: 'Adobe Photoshop', role: 'Key Visuals & Compositing' },
+  { name: 'Adobe Illustrator', role: 'Logos & Vector Systems' },
+  { name: 'Adobe After Effects', role: 'Motion & Visualizers' },
+  { name: 'Adobe Premiere Pro', role: 'Aftermovies & Reels' },
+  { name: 'Adobe Lightroom', role: 'Concert & Portrait Grading' },
+  { name: 'DaVinci Resolve', role: 'Cinema Color Grading' },
+  { name: 'Figma', role: 'Web UI & Prototyping' },
+  { name: 'React & TypeScript', role: 'Interactive Web Builds' },
+];
+
+export const ABOUT_TIMELINE: { period: string; title: string; org: string; detail: string }[] = [
   {
-    label: 'UpWork',
-    handle: 'Thevindu G.',
-    abbr: 'UW',
-    href: 'https://www.upwork.com/freelancers/~018169c21ea3d09e71',
-    group: 'work',
+    period: '2025 - Present',
+    title: 'Lead Visual Designer & Media Crew',
+    org: 'SLIIT FCSC, SIS & Leo Club of SLIIT',
+    detail:
+      "Directed concert campaigns (Wiramaya '26, SLIIT Walk '26), orientation merch, Legacy Magazine, and live stage photography.",
   },
-  { label: 'Hatch.team', handle: 'Thevindu G.', abbr: 'HT', href: BRAND.hatchProfile, group: 'work' },
-  { label: 'Instagram', handle: '@mr.theviya', abbr: 'IG', href: BRAND.instagram, group: 'brand' },
-  { label: 'TikTok', handle: '@mr.theviya', abbr: 'TK', href: BRAND.tiktok, group: 'brand' },
-  { label: 'Pinterest', handle: '@mrtheviya', abbr: 'PI', href: BRAND.pinterest, group: 'brand' },
-  { label: 'Facebook', handle: 'mr.theviya', abbr: 'FB', href: BRAND.facebook, group: 'brand' },
-  { label: 'YouTube', handle: '@slvisualizer', abbr: 'YT', href: BRAND.youtube, group: 'brand' },
-  { label: 'LinkedIn', handle: 'thevindu-thenura', abbr: 'IN', href: BRAND.linkedin, group: 'personal' },
-  { label: 'X / Twitter', handle: '@thevi____', abbr: 'X', href: 'https://x.com/thevi____', group: 'personal' },
-  { label: 'Snapchat', handle: '@thevindut', abbr: 'SC', href: 'https://www.snapchat.com/add/thevindut', group: 'personal' },
-  { label: 'Linktree Brand', handle: 'linktr.ee/mr.theviya', abbr: 'LT', href: BRAND.linktreeBrand, group: 'brand' },
-  { label: 'Linktree Personal', handle: 'thevindu.thenura', abbr: 'LP', href: BRAND.linktreePersonal, group: 'personal' },
+  {
+    period: '2024 - Present',
+    title: 'Visual Designer & Event Editor',
+    org: 'Hyper Visuals & Commercial Clients',
+    detail:
+      'Designed artist key visuals (Umaria, Doctor Band), automotive campaigns (Sunway Motors / TVS), and event aftermovies.',
+  },
+  {
+    period: '2022 - Present',
+    title: 'Freelance Designer & Video Editor',
+    org: 'Sri Lanka & International (Australia)',
+    detail:
+      'Delivered brand systems, facility & fashion campaigns (DIDI, Croptop.lk), short-form reels for AUS clients, and web UI concepts.',
+  },
+  {
+    period: '2021 - 2024',
+    title: 'Creative Lead & Design Foundations',
+    org: 'D.S. Senanayake College & Leo District 306 C2',
+    detail:
+      'Built Battle of the Golds 73rd/74th match-day campaigns, Leo District C2 visuals, and @SLVisualizer YouTube motion edits.',
+  },
 ];

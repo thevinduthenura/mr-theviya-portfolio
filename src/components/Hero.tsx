@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BRAND, HERO_STATS, HERO_TAGS } from '../data/portfolio';
@@ -13,48 +13,18 @@ interface HeroProps {
   onSelectServiceTag: (serviceTitle: string) => void;
 }
 
-interface AnimatedCounts {
-  experience: number;
-  projects: number;
-  clients: number;
-}
-
 const Hero = ({ onNavigate, onSelectServiceTag }: HeroProps) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const watermarkRef = useRef<HTMLDivElement | null>(null);
   const portraitRef = useRef<HTMLDivElement | null>(null);
   const ribbonRef = useRef<HTMLDivElement | null>(null);
 
-  const [counts, setCounts] = useState<AnimatedCounts>({
-    experience: 0,
-    projects: 0,
-    clients: 0,
-  });
-
-  // Smooth count-up stats
-  useEffect(() => {
-    const duration = 1400;
-    const stepMs = 16;
-    let elapsed = 0;
-
-    const timer = window.setInterval(() => {
-      elapsed += stepMs;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-
-      setCounts({
-        experience: Math.round(HERO_STATS[0].value * eased),
-        projects: Math.round(HERO_STATS[1].value * eased),
-        clients: Math.round(HERO_STATS[2].value * eased),
-      });
-
-      if (progress >= 1) {
-        window.clearInterval(timer);
-      }
-    }, stepMs);
-
-    return () => window.clearInterval(timer);
-  }, []);
+  // Display final verified numbers immediately so visitors never catch partial mid-tick values
+  const counts = {
+    experience: HERO_STATS[0].value,
+    projects: HERO_STATS[1].value,
+    clients: HERO_STATS[2].value,
+  };
 
   // GSAP Entrance Orchestration + Clean ScrollTrigger Parallax (no portrait blur/offset lock!)
   useEffect(() => {

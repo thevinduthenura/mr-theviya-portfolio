@@ -20,18 +20,17 @@ const Services = ({ onInquireService }: ServicesProps) => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.srv-card',
-        { y: 64, rotateY: -12, opacity: 0, filter: 'blur(10px)' },
+        { y: 40, opacity: 0 },
         {
           y: 0,
-          rotateY: 0,
           opacity: 1,
-          filter: 'blur(0px)',
-          duration: 0.9,
-          stagger: 0.12,
+          duration: 0.75,
+          stagger: 0.1,
           ease: 'power3.out',
+          clearProps: 'transform,opacity',
           scrollTrigger: {
             trigger: '.services-deck',
-            start: 'top 80%',
+            start: 'top 84%',
             once: true,
           },
         }

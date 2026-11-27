@@ -158,17 +158,9 @@ const Footer = ({ onNavigate, onJumpToCategory }: FooterProps) => {
             </ul>
           </div>
 
-          {/* Col 4: Linktree & Socials */}
+          {/* Col 4: Socials & Single Linktree */}
           <div className="ed-footer-col">
-            <span className="micro-label">LINKTREE &amp; PLATFORMS</span>
-            <div className="ed-footer-linktrees">
-              <a href={BRAND.linktreeBrand} target="_blank" rel="noreferrer">
-                linktr.ee/mr.theviya ↗
-              </a>
-              <a href={BRAND.linktreePersonal} target="_blank" rel="noreferrer">
-                linktr.ee/thevindu.thenura ↗
-              </a>
-            </div>
+            <span className="micro-label">PLATFORMS &amp; LINKS</span>
             <div className="ed-footer-socials">
               {SOCIAL_LINKS.map((social) => (
                 <a
@@ -177,10 +169,9 @@ const Footer = ({ onNavigate, onJumpToCategory }: FooterProps) => {
                   target="_blank"
                   rel="noreferrer"
                   className="ed-social-chip"
-                  aria-label={social.label}
                   title={`${social.label} (${social.handle})`}
                 >
-                  {social.abbr}
+                  {social.label} ↗
                 </a>
               ))}
             </div>
@@ -194,7 +185,7 @@ const Footer = ({ onNavigate, onJumpToCategory }: FooterProps) => {
           </span>
 
           <div className="ed-footer-bottom-right">
-            <span className="ed-footer-loc">BUILT WITH TYPESCRIPT + GSAP</span>
+            <span className="ed-footer-loc">COLOMBO, SRI LANKA · WORLDWIDE</span>
             <button
               type="button"
               className="ed-back-top"

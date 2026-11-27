@@ -50,6 +50,12 @@ export interface GraphicSubTab {
   label: string;
 }
 
+export interface ProjectCaseStudy {
+  role: string;
+  brief: string;
+  outcome: string;
+}
+
 export interface GalleryProject {
   id: string;
   code: string;
@@ -67,6 +73,7 @@ export interface GalleryProject {
   href: string;
   tools: string[];
   summary: string;
+  caseStudy?: ProjectCaseStudy;
   socialFeatured?: boolean;
   primaryPlatform: SocialPlatform;
   socialHandle: string;

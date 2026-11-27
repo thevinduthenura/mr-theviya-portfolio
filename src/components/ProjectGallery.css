@@ -35,15 +35,15 @@
 }
 
 .ag-tab {
-  padding: 9px 18px;
+  padding: 8px 14px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-hairline);
   background: rgba(244, 237, 232, 0.035);
   backdrop-filter: blur(12px);
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--ink-subtle);
   transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
@@ -247,6 +247,39 @@
   font-size: 0.82rem;
   line-height: 1.6;
   color: var(--ink-body);
+}
+
+.ag-case-study {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 240, 232, 0.035);
+  border: 1px solid var(--border-hairline);
+}
+
+.ag-cs-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--accent-champagne);
+  margin-bottom: 4px;
+}
+
+.ag-case-study p {
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--ink-body);
+}
+
+@media (max-width: 760px) {
+  .ag-case-study {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
 }
 
 .ag-inline-thumbs {

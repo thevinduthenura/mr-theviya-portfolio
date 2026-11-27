@@ -5,13 +5,10 @@ import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import StatementShowcase from './components/StatementShowcase';
+import ProjectGallery from './components/ProjectGallery';
+import Services from './components/Services';
 import ScrubbedBentoGallery from './components/ScrubbedBentoGallery';
 import HorizontalScrollGallery from './components/HorizontalScrollGallery';
-import ProjectGallery from './components/ProjectGallery';
-import PosterFanDeck from './components/PosterFanDeck';
-import PerspectiveReel from './components/PerspectiveReel';
-import Services from './components/Services';
 import Clients from './components/Clients';
 import ImpactAbout from './components/ImpactAbout';
 import Contact from './components/Contact';
@@ -22,13 +19,10 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 const SECTION_IDS: SectionId[] = [
   'home',
-  'projects',
+  'gallery',
+  'services',
   'photography',
   'videography',
-  'gallery',
-  'archive',
-  'reel',
-  'services',
   'about',
   'contact',
 ];
@@ -109,19 +103,12 @@ const App = () => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobileOrTouch =
       window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 960;
-    const proxy = { skew: 0, blur: 0 };
 
-    const applyVars = () => {
-      document.documentElement.style.setProperty('--scroll-skew', `${proxy.skew.toFixed(2)}deg`);
-      document.documentElement.style.setProperty('--scroll-blur', `${proxy.blur.toFixed(2)}px`);
-    };
-
-    // Use native 120Hz momentum scroll on mobile/touch; reserve ScrollSmoother for desktop
     if (!prefersReduced && !isMobileOrTouch) {
       smootherRef.current = ScrollSmoother.create({
         wrapper: '#smooth-wrapper',
         content: '#smooth-content',
-        smooth: 1.25,
+        smooth: 1.15,
         effects: true,
         smoothTouch: false,
       });
@@ -141,27 +128,6 @@ const App = () => {
         if (progressRef.current) {
           gsap.set(progressRef.current, { scaleX: self.progress });
         }
-
-        if (prefersReduced || isMobileOrTouch) return;
-
-        const velocity = self.getVelocity();
-        const targetSkew = gsap.utils.clamp(-2.6, 2.6, velocity / -780);
-        const targetBlur = gsap.utils.clamp(0, 1.25, Math.abs(velocity) / 2700);
-
-        if (Math.abs(targetSkew) > Math.abs(proxy.skew)) {
-          proxy.skew = targetSkew;
-          proxy.blur = targetBlur;
-          applyVars();
-
-          gsap.to(proxy, {
-            skew: 0,
-            blur: 0,
-            duration: 0.72,
-            ease: 'power3.out',
-            overwrite: 'auto',
-            onUpdate: applyVars,
-          });
-        }
       },
     });
 
@@ -172,12 +138,10 @@ const App = () => {
       smootherRef.current?.kill();
       smootherRef.current = null;
       setSmootherReady(false);
-      document.documentElement.style.setProperty('--scroll-skew', '0deg');
-      document.documentElement.style.setProperty('--scroll-blur', '0px');
     };
   }, []);
 
-  // Active section scroll-spy via ScrollTrigger (after smoother & pinned galleries ready)
+  // Active section scroll-spy via ScrollTrigger
   useEffect(() => {
     if (!smootherReady) return;
     const triggers = SECTION_IDS.map((id) => {
@@ -194,7 +158,7 @@ const App = () => {
 
     const refreshTimer = window.setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 350);
+    }, 300);
 
     return () => {
       window.clearTimeout(refreshTimer);
@@ -218,7 +182,6 @@ const App = () => {
       <div id="smooth-wrapper">
         <div id="smooth-content">
           <div className="page-shell">
-            {/* Subtle architectural ruler marks framing the top edge */}
             <div className="ruler-strip" aria-hidden="true">
               {RULER_TICKS.map((tick) => (
                 <span key={tick} className={`ruler-tick${tick % 4 === 0 ? ' tall' : ''}`} />
@@ -228,18 +191,15 @@ const App = () => {
             <div className="editorial-frame">
               <main>
                 <Hero onNavigate={scrollToSection} onSelectServiceTag={handleSelectHeroTag} />
-                <StatementShowcase />
-                <ScrubbedBentoGallery ready={smootherReady} />
-                <HorizontalScrollGallery ready={smootherReady} />
                 <ProjectGallery
                   activeTab={activeDesignTab}
                   onChangeTab={setActiveDesignTab}
                 />
-                <PosterFanDeck />
-                <PerspectiveReel />
                 <Services onInquireService={handleInquireService} />
+                <ScrubbedBentoGallery ready={smootherReady} />
+                <HorizontalScrollGallery ready={smootherReady} />
                 <Clients />
-                <ImpactAbout onNavigate={scrollToSection} />
+                <ImpactAbout onNavigate={scrollToSection} ready={smootherReady} />
                 <Contact
                   selectedService={preselectedService}
                   onSelectService={setPreselectedService}
